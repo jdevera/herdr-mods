@@ -7,7 +7,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-const dir = path.join(__dirname, "../runtime");
+const dir = path.join(__dirname, "..");
 const FILES = [
     "settings.js",
     "file-icons.js",

@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const root = path.resolve(__dirname, "..");
-const runtime = path.join(root, "runtime");
+const runtime = root;
 
 test("package owns its helper and has no custom-mod or layout dependency", () => {
     const source = fs.readFileSync(path.join(runtime, "main.js"), "utf8");

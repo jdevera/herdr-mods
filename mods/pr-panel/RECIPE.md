@@ -76,7 +76,7 @@ an actual operation.
 
 The package is `mods/pr-panel/` in this repository:
 
-- `runtime/`: installable native UI, manifest, settings schema, and SVG assets.
+- Package root: native UI, manifest, configuration schema, and SVG assets.
 - `helper/`: Go helper and its tests.
 - `tests/`: JavaScript tests and optional-icon fixture data.
 - `LICENSE`, `NOTICE`, `PROVENANCE.md`: ship alongside the installed runtime.
@@ -92,7 +92,7 @@ From the repository root, using Node.js 24.12+:
 node scripts/install.ts --mod pr-panel
 ```
 
-The shared installer copies runtime and legal files, preserves user configuration,
+The shared installer copies the complete package, including tests and helper source, preserves user configuration,
 and backs up existing destinations. It then shows the manifest's `install` array
 and asks before running the helper build; `--yes` approves it. A custom Herdr home
 is the positional argument. The helper build requires Go 1.23+ on the target.

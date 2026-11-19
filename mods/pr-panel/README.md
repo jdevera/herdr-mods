@@ -163,7 +163,7 @@ New worktree writes `branch.<name>.herdr-pr` to Git config, which the panel read
 
 ### Work on the mod
 
-- `runtime/main.js` lists what's where. `settings.js` reads the panel’s layered configuration.
+- `main.js` lists what's where. `settings.js` reads the panel’s layered configuration.
 - `github/model.js` says what GitHub's answers mean, `github/` reads, and `actions/` writes and hands off. `state/saved.js` is what survives a reload: filters, the open PR, read comments.
 - `views/` draws with `views/ui.js`, and `icons/` holds the icons.
 - `helper/main.go` is the JSON bridge to `gh`, with validated requests and a 26-second timeout. `install.ts` is the optional post-install build step, invoked by the shared installer.

@@ -47,7 +47,7 @@ function json(path: string, value: unknown) {
 }
 
 function manifest(root: string) {
-    return join(root, "mods/pr-panel/runtime/mod.json");
+    return join(root, "mods/pr-panel/mod.json");
 }
 
 function setCommand(root: string, command: unknown) {
@@ -59,7 +59,7 @@ function setCommand(root: string, command: unknown) {
 
 const decline = async () => false;
 
-test("discovers both layouts and generates an idempotent README section", async (t) => {
+test("discovers package-root manifests and generates an idempotent README section", async (t) => {
     const { root } = fixture(t);
 
     assert.deepEqual(
@@ -76,8 +76,8 @@ test("discovers both layouts and generates an idempotent README section", async 
         /changed description \\| with a pipe/,
     );
     assert.equal(await generate(root), false);
-    cpSync(manifest(root), join(root, "mods/pr-panel/mod.json"));
-    assert.throws(() => discover(root), /exactly one/);
+    rmSync(manifest(root));
+    assert.throws(() => discover(root), /missing mod.json at package root/);
 });
 
 test("repository rules accept the tree and reject invalid manifests and license text", (t) => {
@@ -107,13 +107,13 @@ test("repository rules accept the tree and reject invalid manifests and license 
 
 test("configuration schema checks standalone settings and required files", (t) => {
     const { root } = fixture(t);
-    const config = join(root, "mods/pr-panel/runtime/settings.local.json");
+    const config = join(root, "mods/pr-panel/settings.local.json");
 
     json(config, { list: { page_size: 0 } });
     assert.throws(() => validate(root), /page_size/);
     json(config, { list: { page_size: 50 } });
     validate(root);
-    rmSync(join(root, "mods/pr-panel/runtime/main.js"));
+    rmSync(join(root, "mods/pr-panel/main.js"));
     assert.throws(() => validate(root), /missing main.js/);
 });
 
@@ -220,7 +220,7 @@ test("updates migrate legacy settings, preserve layers and back up the old manif
 
     writeFileSync(join(dest, "settings.local.json"), layer);
     // Even shipped config files must not overwrite a user's versions.
-    json(join(root, "mods/pr-panel/runtime/settings.local.json"), {
+    json(join(root, "mods/pr-panel/settings.local.json"), {
         list: { page_size: 1 },
     });
     await install(app, { root, approve: decline });
@@ -259,4 +259,35 @@ test("invalid commands fail before installation and installer runs without node_
 
     assert.equal(result.status, 0, result.stderr);
     assert.ok(existsSync(join(app, "mods/pr-panel/main.js")));
+});
+
+test("installed panel includes runnable tests and helper source", async (t) => {
+    const { root, app } = fixture(t);
+
+    await install(app, { root, selected: ["pr-panel"], approve: decline });
+    const pkg = join(app, "mods/pr-panel");
+
+    for (const name of [
+        "helper/main.go",
+        "helper/main_test.go",
+        "helper/go.mod",
+        "install.ts",
+        "README.md",
+        "RECIPE.md",
+    ]) {
+        assert.ok(existsSync(join(pkg, name)), name);
+    }
+
+    const result = spawnSync(
+        process.execPath,
+        [
+            "--test",
+            "tests/packaging.test.cjs",
+            "tests/settings.test.cjs",
+            "tests/pr.test.cjs",
+        ],
+        { cwd: pkg, encoding: "utf8" },
+    );
+
+    assert.equal(result.status, 0, result.stdout + result.stderr);
 });

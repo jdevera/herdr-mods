@@ -125,5 +125,5 @@
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Branch PR configuration",
-  "$comment": "Modified by Jacobo de Vera, 2026: extracted from the upstream manifest schema for standalone layered settings; see ../PROVENANCE.md."
+  "$comment": "Modified by Jacobo de Vera, 2026: extracted from the upstream manifest schema for standalone layered settings; see PROVENANCE.md."
 }

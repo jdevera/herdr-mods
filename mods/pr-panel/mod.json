@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../schemas/mod.schema.json",
+  "$schema": "../../schemas/mod.schema.json",
   "version": "2.4.0",
   "place": "none",
   "title": "Pull request panel",

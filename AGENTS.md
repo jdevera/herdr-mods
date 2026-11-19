@@ -22,6 +22,8 @@
 
 ## Mod conventions
 
+- Keep `main.js` and `mod.json` at each mod’s package root, with tests and helper source alongside them. Installed copies should support running and editing their own tests.
+
 - When importing or adapting a mod, separate metadata from user configuration. `mod.json` contains metadata only; never embed a `settings` object.
 - Load `settings.json`, then `settings.*.json` in alphabetical (code-point) order. Recursively merge objects; later files override specified values. Keep defaults in code and describe configuration in `config.schema.json`.
 - The sole repository installer is `scripts/install.ts`: TypeScript run directly by Node.js 24.12+, using built-in modules only. Development checks may have their own dependencies.

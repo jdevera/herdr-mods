@@ -1,2 +1,2 @@
-# Modified by Jacobo de Vera, 2026: runtime directory layout.
-runtime/bin/
+# Modified by Jacobo de Vera, 2026: package-root runtime layout.
+bin/

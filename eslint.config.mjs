@@ -1,6 +1,6 @@
 import tseslint from "typescript-eslint";
 export default tseslint.config(
-    { ignores: ["mods/**/runtime/**", "mods/**/tests/**", "node_modules/**"] },
+    { ignores: ["mods/**/*.js", "mods/**/tests/**", "node_modules/**"] },
     ...tseslint.configs.recommended,
     {
         files: ["**/*.ts"],

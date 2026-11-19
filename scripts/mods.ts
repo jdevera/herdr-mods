@@ -40,17 +40,13 @@ export function discover(root = PROJECT): Mod[] {
         .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
         .map((entry) => {
             const pkg = join(root, "mods", entry.name);
-            const sources = [pkg, join(pkg, "runtime")].filter((p) =>
-                existsSync(join(p, "mod.json")),
-            );
+            const manifestPath = join(pkg, "mod.json");
 
-            if (sources.length !== 1) {
-                throw new Error(
-                    `${pkg}: expected exactly one mod.json at root or runtime/`,
-                );
+            if (!existsSync(manifestPath)) {
+                throw new Error(`${pkg}: missing mod.json at package root`);
             }
 
-            const raw = readJson(join(sources[0], "mod.json"));
+            const raw = readJson(manifestPath);
 
             if (!isObject(raw)) {
                 throw new Error(`${pkg}: manifest must be an object`);
@@ -87,7 +83,7 @@ export function discover(root = PROJECT): Mod[] {
             return {
                 id: entry.name,
                 package: pkg,
-                source: sources[0],
+                source: pkg,
                 manifest: raw as unknown as Manifest,
             };
         });

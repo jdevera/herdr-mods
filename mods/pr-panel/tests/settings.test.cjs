@@ -15,7 +15,7 @@ const context = {
 vm.createContext(context);
 vm.runInContext(
     fs
-        .readFileSync(path.join(__dirname, "../runtime/settings.js"), "utf8")
+        .readFileSync(path.join(__dirname, "../settings.js"), "utf8")
         .replace(/^import\s+[\s\S]*?;\n/gm, "")
         .replaceAll("export function", "function")
         .replaceAll("export async function", "async function"),

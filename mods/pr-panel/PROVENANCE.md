@@ -9,8 +9,8 @@ Upstream: https://github.com/munza/herdr-mods/tree/1abf4870adb4c3f7a71739db1e0c2
 Version: 2.4.0. Copyright 2026 Tawsif Aqib.
 Local modifications: Copyright 2026 Jacobo de Vera.
 
-This is a locally maintained derivative. The upstream runtime was moved to
-`runtime/`; helper and tests remain within this package. The upstream preview
+This is a locally maintained derivative. The upstream UI files from `mods/branch-pr/` now live at this package’s root;
+helper and tests remain alongside them. The upstream preview
 screenshot was removed. README and RECIPE were adapted for this repository. The recipe now documents
 actual caching, remote helper installation, layout integration, and read-only
 validation instead of upstream action-testing requirements.
@@ -44,9 +44,13 @@ Manifest and schema now include descriptions and license identifiers for reposit
 The maintained package is named `pr-panel`; upstream is still Branch PR.
 Metadata uses the shared repository schema. User configuration is loaded from
 `settings.json`, followed by `settings.*.json` in alphabetical order, with recursive
-object merging. Its schema is `runtime/config.schema.json`. The upstream Go
+object merging. Its schema is `config.schema.json`. The upstream Go
 installer was removed in favor of the repository Node installer. The original
 `install.ts` post-install script is MIT-licensed; see LICENSE-install.
 Runtime JavaScript and JSON were formatted with Prettier; behavior changes are
 recorded above and in the configuration loader.
 The fixture license is tests/fixtures/better-icons/mods/better-icons/LICENSE-material-icon-theme.txt.
+
+The intermediate `runtime/` directory was flattened so the package can be copied
+directly into Herdr while retaining runnable tests and helper source. Test paths,
+schema references, and installation documentation were updated together.

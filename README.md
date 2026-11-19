@@ -34,7 +34,7 @@ node scripts/install.ts /path/to/herdr-home --mod pr-panel
 node scripts/install.ts --yes
 ```
 
-The installer discovers each mod's `mod.json`, copies its runtime, licenses,
+The installer discovers each mod's `mod.json`, copies its complete package (including tests and helper source), licenses,
 provenance, and schema, and backs up existing installations. It preserves user
 settings files. Updates use the same command.
 

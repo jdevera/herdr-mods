@@ -1,6 +1,6 @@
 # Optional chezmoi deployment for Herdr mods
 
-Status: proposal, not implemented. Baseline: `7356ec2` on `main`.
+Status: deployment proposal; package flattening is implemented. Baseline: `7356ec2` on `main`.
 Researched against chezmoi 2.74.1 on 2026-11-19.
 
 ## Copy complete mod packages
@@ -32,9 +32,9 @@ chezmoi directly for copying and updates.
 
 ## Consistent package layout
 
-The badge and tab bar already have `main.js` at the package root. Propose moving
-`pr-panel/runtime/*` up into `pr-panel/` so its source path matches the installed
-path as well. Keep the helper and tests alongside the UI:
+All three mods now have `main.js` and `mod.json` at the package root. The panel
+has been flattened so its source paths match its installed paths, with helper
+source and tests alongside the UI:
 
 ```text
 mods/pr-panel/
@@ -50,8 +50,8 @@ mods/pr-panel/
     README.md, RECIPE.md
 ```
 
-Update relative paths in tests, scripts, documentation, and provenance together.
-Tests must resolve files relative to their own package, not require the original
+Relative paths in tests, scripts, documentation, and provenance have been updated.
+Tests resolve files relative to their own package, without requiring the original
 checkout path. The current panel tests use Node's built-in runner; its Go tests
 use the standard Go toolchain. Neither needs the repository's development npm
 dependencies.
@@ -164,7 +164,7 @@ no script execution during dry-run. No real profiles were changed.
 
 Implementation should:
 
-1. Flatten the panel's runtime directory and fix its package-relative paths.
+1. Completed: flatten the panel and fix its package-relative paths.
 2. Add the small profile adapter with complete-package copying and local-only
    exclusions. Align the optional installer with that packaging convention.
 3. Run the actual JavaScript and Go tests from a disposable installed copy.
@@ -176,5 +176,5 @@ Implementation should:
 7. Review a real client's diff, back up its current installation, apply, and
    validate visually. Repeat explicitly for each additional machine.
 
-This branch contains the proposal only. Package restructuring and real profile
-setup have not started.
+Package flattening and complete-package Node installation are implemented. The
+chezmoi adapter and real profile setup remain proposed.

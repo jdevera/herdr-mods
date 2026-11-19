@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Modified by Jacobo de Vera, 2026: separate, layered configuration; see ../PROVENANCE.md.
+// Modified by Jacobo de Vera, 2026: separate, layered configuration; see PROVENANCE.md.
 import { readTextFile, appHome } from "herdr";
 import { readdir } from "fs/promises";
 
