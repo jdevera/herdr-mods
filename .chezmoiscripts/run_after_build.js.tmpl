@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+// Approved commands: {{ if hasKey . "herdrModsCommands" }}{{ .herdrModsCommands | toJson }}{{ else }}{}{{ end }}
+(async () => {
+    const { pathToFileURL } = await import("node:url");
+    const { join } = await import("node:path");
+    const source = {{ .chezmoi.sourceDir | toJson }};
+    const destination = {{ .chezmoi.destDir | toJson }};
+    const approved = {{ if hasKey . "herdrModsCommands" }}{{ .herdrModsCommands | toJson }}{{ else }}{}{{ end }};
+    const { postInstall } = await import(pathToFileURL(join(source, "scripts/post-install.ts")).href);
+
+    postInstall(source, destination, approved);
+})().catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+});

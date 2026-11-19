@@ -155,7 +155,10 @@ test("copies before asking, declines without running, and leaves layout alone", 
     );
 
     for (const mod of discover(root)) {
-        assert.ok(existsSync(join(app, "mods", mod.id, "mod.schema.json")));
+        assert.deepEqual(
+            readJson(join(app, "mods", mod.id, "mod.json")),
+            mod.manifest,
+        );
     }
 });
 

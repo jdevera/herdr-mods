@@ -7,7 +7,7 @@ import {
     readdirSync,
     writeFileSync,
 } from "node:fs";
-import { basename, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { homedir } from "node:os";
 import { spawnSync } from "node:child_process";
 import { createInterface } from "node:readline/promises";
@@ -53,21 +53,6 @@ function noSymlinks(path: string): void {
             noSymlinks(join(path, name));
         }
     }
-}
-
-function schemaPath(mod: Mod, root: string): string | undefined {
-    if (!mod.manifest.$schema) {
-        return;
-    }
-
-    const path = resolve(mod.source, mod.manifest.$schema);
-    const rel = relative(root, path);
-
-    if (rel.startsWith(`..${sep}`) || rel === ".." || isAbsolute(rel)) {
-        throw new Error(`${mod.id}: schema must be in the repository`);
-    }
-
-    return path;
 }
 
 async function confirm(): Promise<boolean> {
@@ -117,17 +102,12 @@ export async function install(
             const destination = join(app, "mods", mod.id);
 
             noSymlinks(destination);
-            const schema = schemaPath(mod, root);
             const required = [
                 join(mod.source, "main.js"),
                 ...legalFiles(mod.package).map((name) =>
                     join(mod.package, name),
                 ),
             ];
-
-            if (schema) {
-                required.push(schema);
-            }
 
             if (mod.manifest.license === "Apache-2.0") {
                 required.push(join(mod.package, "NOTICE"));
@@ -184,7 +164,7 @@ export async function install(
                 }
             }
 
-            return { mod, destination, schema, migrated };
+            return { mod, destination, migrated };
         });
 
     const backups = join(app, "backups");
@@ -192,7 +172,7 @@ export async function install(
     mkdirSync(backups, { recursive: true });
     const backup = mkdtempSync(join(backups, "mods-"));
 
-    for (const { mod, destination, schema, migrated } of prepared) {
+    for (const { mod, destination, migrated } of prepared) {
         if (existsSync(destination)) {
             cpSync(destination, join(backup, mod.id), { recursive: true });
         }
@@ -205,30 +185,29 @@ export async function install(
                 if (
                     name === "bin" ||
                     name === "node_modules" ||
+                    name === ".build" ||
+                    name === "dist" ||
+                    name === "coverage" ||
+                    name === ".cache" ||
+                    name === ".DS_Store" ||
                     name === "__pycache__" ||
                     name === "jsconfig.json" ||
+                    isSettings(name) ||
+                    name.endsWith(".swp") ||
+                    name.endsWith(".swo") ||
+                    name.endsWith("~") ||
                     name.endsWith(".d.ts") ||
                     name.endsWith(".error")
                 ) {
                     return false;
                 }
 
-                return (
-                    !isSettings(name) ||
-                    !existsSync(join(destination, relative(mod.source, source)))
-                );
+                return true;
             },
         });
 
         for (const name of legalFiles(mod.package)) {
             cpSync(join(mod.package, name), join(destination, name));
-        }
-
-        const manifest = { ...mod.manifest };
-
-        if (schema) {
-            cpSync(schema, join(destination, "mod.schema.json"));
-            manifest.$schema = "./mod.schema.json";
         }
 
         if (migrated) {
@@ -238,10 +217,6 @@ export async function install(
             );
         }
 
-        writeFileSync(
-            join(destination, "mod.json"),
-            JSON.stringify(manifest, null, 2) + "\n",
-        );
         console.log(`Installed ${mod.id}: ${destination}`);
         const recipe = join(mod.package, "RECIPE.md");
 

@@ -23,6 +23,11 @@ is a reference arrangement, not an installable mod or a replacement for your own
 
 ## Install
 
+For a personal setup that also brings installed edits back to this checkout,
+use the [isolated chezmoi profile](docs/chezmoi.md). It comes with an installable
+`herdr-mods` executable. The mods also work without chezmoi, using the installer
+below or by copying a complete package and following its recipe.
+
 Requires Node.js 24.12+; the installer uses built-in modules only. No npm install,
 TypeScript compilation, or Python is needed to install mods.
 
@@ -97,7 +102,8 @@ manifests, with existing standalone configuration taking precedence.
 
 ## Development
 
-Tooling is TypeScript executed directly by Node, with no build step. Herdr's
+Tooling is TypeScript executed directly by Node. The optional standalone
+`herdr-mods` executable has its own build step. Herdr's
 native runtime files remain JavaScript. Install the development dependencies and
 activate the hooks once per clone:
 

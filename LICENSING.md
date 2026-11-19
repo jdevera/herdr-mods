@@ -22,3 +22,8 @@ project retains its inherited license and required notices, with local changes
 recorded in its PROVENANCE.md and modified Apache files marked as changed.
 License texts themselves and retained third-party notices keep their original
 wording. The repository-level MIT license does not relicense those components.
+
+The standalone `herdr-mods` executable bundles Node.js. Its build embeds the
+complete license file from the Node.js distribution, including its third-party
+notices, together with this repository's MIT license. Run `herdr-mods --licenses`
+to read them. Build dependencies are not included in the executable.

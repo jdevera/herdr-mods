@@ -12,3 +12,6 @@ The win-*.svg assets are unchanged Herdr assets under Apache-2.0.
 The package and runtime references use the descriptive repository name. Code and metadata were formatted with Prettier.
 
 RECIPE.md is original MIT-licensed setup documentation; see LICENSE-recipe.
+
+The repository-relative `$schema` metadata link was removed for unchanged copying
+and chezmoi re-add. Repository checks still validate metadata against the central schema.

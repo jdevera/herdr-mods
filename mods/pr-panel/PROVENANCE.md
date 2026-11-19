@@ -3,7 +3,7 @@
 License: Apache-2.0 for this package, including local modifications, except
 `tests/fixtures/better-icons/mods/better-icons/icons.json`, whose Material Icon
 Theme data is MIT; its original license is alongside it. The fixture is only
-used by tests and is not deployed. See LICENSE and the retained upstream NOTICE.
+used by tests and is included with complete-package deployments. See LICENSE and the retained upstream NOTICE.
 
 Upstream: https://github.com/munza/herdr-mods/tree/1abf4870adb4c3f7a71739db1e0c29493f5e3f95/branch-pr
 Version: 2.4.0. Copyright 2026 Tawsif Aqib.
@@ -54,3 +54,6 @@ The fixture license is tests/fixtures/better-icons/mods/better-icons/LICENSE-mat
 The intermediate `runtime/` directory was flattened so the package can be copied
 directly into Herdr while retaining runnable tests and helper source. Test paths,
 schema references, and installation documentation were updated together.
+
+The repository-relative `$schema` metadata link was removed for unchanged copying
+and chezmoi re-add. Repository checks still validate metadata against the central schema.

@@ -14,3 +14,6 @@ The package and runtime references use the descriptive repository name. Code and
 RECIPE.md is original MIT-licensed setup documentation; see LICENSE-recipe.
 
 The PR badge is omitted entirely when no pull request is available, including lookup failures; no unavailable placeholder or empty status-bar slot is rendered.
+
+The repository-relative `$schema` metadata link was removed for unchanged copying
+and chezmoi re-add. Repository checks still validate metadata against the central schema.

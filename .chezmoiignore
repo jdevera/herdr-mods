@@ -1,0 +1,21 @@
+# Only mods and the after-script participate in this profile.
+*
+!mods
+!.chezmoiscripts
+
+mods/**/settings.json
+mods/**/settings.*.json
+mods/**/node_modules
+mods/**/bin
+mods/**/.build
+mods/**/dist
+mods/**/coverage
+mods/**/.cache
+mods/**/__pycache__
+mods/**/*.d.ts
+mods/**/jsconfig.json
+mods/**/*.error
+mods/**/.DS_Store
+mods/**/*.swp
+mods/**/*.swo
+mods/**/*~

@@ -7,3 +7,16 @@ herdr.d.ts
 jsconfig.json
 
 .build/
+
+# Local configuration and generated artifacts never belong to a mod package.
+mods/**/settings.json
+mods/**/settings.*.json
+mods/**/bin/
+mods/**/dist/
+mods/**/coverage/
+mods/**/.cache/
+mods/**/__pycache__/
+mods/**/*.d.ts
+*.swp
+*.swo
+*~

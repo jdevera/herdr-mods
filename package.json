@@ -14,12 +14,16 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node --test tests/*.test.ts mods/pr-panel/tests/*.test.cjs && go -C mods/pr-panel/helper test ./...",
-    "lint:fix": "eslint scripts tests mods/*/install.ts --fix"
+    "lint:fix": "eslint scripts tests mods/*/install.ts --fix",
+    "build:command": "node scripts/build-command.ts",
+    "install:command": "node scripts/install-command.ts"
   },
   "devDependencies": {
     "@types/node": "26.6.6",
     "ajv": "8.20.0",
+    "esbuild": "0.28.2",
     "eslint": "10.15.0",
+    "postject": "1.0.0-alpha.6",
     "prettier": "3.10.1",
     "typescript": "6.0.3",
     "typescript-eslint": "8.73.0"

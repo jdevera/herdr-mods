@@ -31,4 +31,7 @@
 - Complete normal installation before offering custom commands. Show the exact command and ask before running it; `--yes` opts in. Run without an implicit shell from the mod's package directory, with `HERDR_MOD_DIR` and `HERDR_APP_HOME` pointing to the destination.
 - Custom commands handle additions or corrections, must be safe to rerun, and must not replace the shared installer. Preserve user settings and report post-install failures separately from successful file installation.
 
+- Keep chezmoi optional: map complete packages directly, including tests and helper source. Exclude local settings and generated artifacts in both Git and deployment rules. Test ignore behavior and edits returning through re-add.
+- `herdr-mods` is an installed executable, not a shell function. Keep its profile isolated from other chezmoi sources. Do not edit shell configuration to install it; use a directory already on PATH or give installation instructions.
+
 - Format code and configuration with Prettier. Use four-space indentation for TypeScript and JavaScript. Use blank lines between logical steps, blocks, and declarations; the ESLint autofix hook enforces vertical spacing in TypeScript. The prek hook formats automatically and stops the commit when files change; stage those changes and retry. Preserve license texts and retained notices verbatim.
