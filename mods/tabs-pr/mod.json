@@ -1,0 +1,9 @@
+{
+  "place": "none",
+  "title": "Tabs",
+  "cloned_from": {
+    "name": "tabs",
+    "version": "0.1.16"
+  },
+  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr mods integration; see PROVENANCE.md."
+}

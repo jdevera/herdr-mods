@@ -1,0 +1,9 @@
+.DS_Store
+*.error
+node_modules/
+# Herdr generates these for the installed runtime.
+gpui-kit.d.ts
+herdr.d.ts
+jsconfig.json
+
+.build/
