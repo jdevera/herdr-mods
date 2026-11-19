@@ -1,0 +1,12 @@
+{
+  "place": "none",
+  "title": "Pull request tab bar",
+  "cloned_from": {
+    "name": "tabs",
+    "version": "0.1.16"
+  },
+  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr mods integration and catalog metadata; see PROVENANCE.md.",
+  "description": "Herdr tab bar with a PR panel toggle and per-space panel selection.",
+  "license": "Apache-2.0",
+  "$schema": "../../schemas/mod.schema.json"
+}

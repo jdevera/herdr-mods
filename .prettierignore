@@ -1,0 +1,12 @@
+node_modules/
+.build/
+.git/
+**/__pycache__/
+**/.ruff_cache/
+**/*.d.ts
+**/jsconfig.json
+**/*.error
+**/LICENSE*
+**/NOTICE*
+**/*.svg
+package-lock.json

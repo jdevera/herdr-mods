@@ -5,15 +5,17 @@ Jacobo de Vera, except the components explicitly listed below. It does not
 replace licenses or copyright notices on third-party material. This repository
 contains multiple licenses; do not assume every file is MIT.
 
-| Scope | License | Provenance and notices |
-| --- | --- | --- |
-| Original repository tooling and documentation, including scripts/install.py | MIT | [Root LICENSE](LICENSE) |
-| mods/branch-pr, including local modifications | Apache-2.0, except the fixture below | [LICENSE](mods/branch-pr/LICENSE), [NOTICE](mods/branch-pr/NOTICE), [PROVENANCE.md](mods/branch-pr/PROVENANCE.md) |
-| mods/branch-pr/tests/fixtures/better-icons/mods/better-icons/icons.json | MIT (Material Icon Theme data) | [Original license](mods/branch-pr/tests/fixtures/better-icons/mods/better-icons/LICENSE-material-icon-theme.txt); provenance in the containing mod |
-| mods/tabs-pr, including local modifications | Apache-2.0 | [LICENSE](mods/tabs-pr/LICENSE), [NOTICE](mods/tabs-pr/NOTICE), [PROVENANCE.md](mods/tabs-pr/PROVENANCE.md) |
-| mods/workspace-status-pr, including local modifications | Apache-2.0, except its four git-*.svg icons | [LICENSE](mods/workspace-status-pr/LICENSE), [NOTICE](mods/workspace-status-pr/NOTICE), [PROVENANCE.md](mods/workspace-status-pr/PROVENANCE.md) |
-| mods/workspace-status-pr/git-*.svg | MIT (GitHub Octicons) | [Original license](mods/workspace-status-pr/LICENSE-octicons) |
-| layouts/main-pr.json | Apache-2.0 | [LICENSE](layouts/LICENSE), [PROVENANCE.md](layouts/PROVENANCE.md) |
+| Scope                                                                       | License                                                               | Provenance and notices                                                                                                                            |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Original repository tooling and documentation, including scripts/install.ts | MIT                                                                   | [Root LICENSE](LICENSE)                                                                                                                           |
+| mods/pr-panel, including local modifications                                | Apache-2.0, except the original post-install script and fixture below | [LICENSE](mods/pr-panel/LICENSE), [NOTICE](mods/pr-panel/NOTICE), [PROVENANCE.md](mods/pr-panel/PROVENANCE.md)                                    |
+| mods/pr-panel/install.ts                                                    | MIT                                                                   | [License](mods/pr-panel/LICENSE-install); provenance in the containing mod                                                                        |
+| mods/pr-panel/tests/fixtures/better-icons/mods/better-icons/icons.json      | MIT (Material Icon Theme data)                                        | [Original license](mods/pr-panel/tests/fixtures/better-icons/mods/better-icons/LICENSE-material-icon-theme.txt); provenance in the containing mod |
+| mods/pr-tab-bar, including local modifications                              | Apache-2.0                                                            | [LICENSE](mods/pr-tab-bar/LICENSE), [NOTICE](mods/pr-tab-bar/NOTICE), [PROVENANCE.md](mods/pr-tab-bar/PROVENANCE.md)                              |
+| mods/pr-badge, including local modifications                                | Apache-2.0, except its four git-*.svg icons                           | [LICENSE](mods/pr-badge/LICENSE), [NOTICE](mods/pr-badge/NOTICE), [PROVENANCE.md](mods/pr-badge/PROVENANCE.md)                                    |
+| mods/pr-badge/RECIPE.md and mods/pr-tab-bar/RECIPE.md                       | MIT                                                                   | Each package includes LICENSE-recipe                                                                                                              |
+| mods/pr-badge/git-*.svg                                                     | MIT (GitHub Octicons)                                                 | [Original license](mods/pr-badge/LICENSE-octicons)                                                                                                |
+| examples/layouts/main-pr.json                                               | Apache-2.0                                                            | [LICENSE](examples/layouts/LICENSE), [PROVENANCE.md](examples/layouts/PROVENANCE.md)                                                              |
 
 Each new original mod must carry its own MIT LICENSE. A mod based on another
 project retains its inherited license and required notices, with local changes

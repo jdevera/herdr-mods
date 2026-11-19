@@ -1,0 +1,51 @@
+repos:
+  - repo: local
+    hooks:
+      - id: repo-rules
+        name: Manifest schemas and licensing rules
+        language: system
+        entry: npm run check:repo
+        pass_filenames: false
+        always_run: true
+      - id: readme
+        name: Generate README mod table
+        language: system
+        entry: node scripts/readme.ts
+        pass_filenames: false
+        always_run: true
+      - id: typecheck
+        name: TypeScript types
+        language: system
+        entry: npm run typecheck
+        pass_filenames: false
+        always_run: true
+      - id: lint
+        name: TypeScript lint
+        language: system
+        entry: npm run lint:fix
+        pass_filenames: false
+        always_run: true
+      - id: format
+        name: Tooling formatting
+        language: system
+        entry: npm run format
+        pass_filenames: false
+        always_run: true
+      - id: source
+        name: JavaScript syntax and Go formatting
+        language: system
+        entry: node scripts/check-source.ts
+        pass_filenames: false
+        always_run: true
+      - id: tests
+        name: Tooling and mod tests
+        language: system
+        entry: npm test
+        pass_filenames: false
+        always_run: true
+      - id: go-vet
+        name: Go vet
+        language: system
+        entry: go -C mods/pr-panel/helper vet ./...
+        pass_filenames: false
+        always_run: true

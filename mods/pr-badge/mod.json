@@ -1,0 +1,12 @@
+{
+  "place": "none",
+  "cloned_from": {
+    "name": "workspace-status",
+    "version": "0.1.16"
+  },
+  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr mods integration and catalog metadata; see PROVENANCE.md.",
+  "title": "Pull request badge",
+  "description": "Current-branch PR badge with GitHub state colors and icons, including remote repositories.",
+  "license": "Apache-2.0",
+  "$schema": "../../schemas/mod.schema.json"
+}

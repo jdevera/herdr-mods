@@ -19,3 +19,14 @@
 - Keep license exceptions explicit in LICENSING.md and the containing mod's provenance. Before introducing incompatible terms, explain the constraint.
 - Keep maintained mods under mods/; do not describe them as vendored. Keep provenance inside each mod, and do not copy upstream preview screenshots.
 - Deployment must include each mod's license, notices, and provenance, including any separately licensed assets. Update paths, installers, and tests on moves.
+
+## Mod conventions
+
+- When importing or adapting a mod, separate metadata from user configuration. `mod.json` contains metadata only; never embed a `settings` object.
+- Load `settings.json`, then `settings.*.json` in alphabetical (code-point) order. Recursively merge objects; later files override specified values. Keep defaults in code and describe configuration in `config.schema.json`.
+- The sole repository installer is `scripts/install.ts`: TypeScript run directly by Node.js 24.12+, using built-in modules only. Development checks may have their own dependencies.
+- A mod may declare an optional `install` command in `mod.json` as a nonempty array of nonempty strings. Never accept a shell command string.
+- Complete normal installation before offering custom commands. Show the exact command and ask before running it; `--yes` opts in. Run without an implicit shell from the mod's package directory, with `HERDR_MOD_DIR` and `HERDR_APP_HOME` pointing to the destination.
+- Custom commands handle additions or corrections, must be safe to rerun, and must not replace the shared installer. Preserve user settings and report post-install failures separately from successful file installation.
+
+- Format code and configuration with Prettier. Use four-space indentation for TypeScript and JavaScript. Use blank lines between logical steps, blocks, and declarations; the ESLint autofix hook enforces vertical spacing in TypeScript. The prek hook formats automatically and stops the commit when files change; stage those changes and retry. Preserve license texts and retained notices verbatim.

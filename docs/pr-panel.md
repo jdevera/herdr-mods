@@ -25,6 +25,7 @@ helper build, permissions, and remote authentication behavior before installatio
 Branch PR 2.4.0 is now maintained here, installed, and validated on both clients.
 
 Alternatives:
+
 - Remote Checker: https://github.com/SimonBystromTableCheck/herdr-mods/tree/main/remote-checker
   Strong checks dashboard, but documented comment rows are summaries that open GitHub.
 - Redline: https://herdr.dev/mods/iampedii/herdr-redline/
@@ -33,7 +34,7 @@ Alternatives:
 ## Installed result
 
 Validated with both local and remote repository access. The PRs tab-bar button toggles
-`branch-pr` inside the existing `main-pr` panel stack. The colored badge remains.
+`pr-panel` inside the existing `main-pr` panel stack. The colored badge remains.
 
 The upstream implementation used the viewer's GitHub login even for remote
 spaces. Testing exposed private-repository access failure on the viewing client. The
@@ -41,7 +42,7 @@ local patch routes the helper through Herdr to the repository machine, retaining
 its credentials and keeping browser navigation local to the viewer.
 
 Validation: 73 JavaScript tests and both Go test packages passed. Both clients
-passed `herdr-app check` for Branch PR and tabs-pr. A real private PR loaded through both local and remote access, with passing checks. Screenshots
+passed `herdr-app check` for Branch PR and pr-tab-bar. A real private PR loaded through both local and remote access, with passing checks. Screenshots
 verified native Markdown description and Checks views, plus the full Comments
 view on the remote viewing client. Failure coloring and
 failed-log behavior are covered by upstream mocked tests; this PR currently

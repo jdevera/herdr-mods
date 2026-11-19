@@ -1,8 +1,0 @@
-{
-  "place": "none",
-  "cloned_from": {
-    "name": "workspace-status",
-    "version": "0.1.16"
-  },
-  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr mods integration; see PROVENANCE.md."
-}
