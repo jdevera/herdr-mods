@@ -21,26 +21,28 @@ mod’s documentation when adapting them to your setup.
 
 ### I want all the mods
 
-From this checkout, install the command and apply the collection with chezmoi:
+From this checkout:
 
 ```sh
-npm ci
-npm run build:command
-npm run install:command
-herdr-mods setup --source "$PWD"
-herdr-mods approve
-herdr-mods diff
-herdr-mods apply
+sh setup.sh
 ```
 
-This installs `herdr-mods` in `~/.local/bin` and creates a separate chezmoi profile
+Setup checks requirements, explains its steps, and offers the mod build commands
+as a group or individually. It installs `herdr-mods` in `~/.local/bin` and creates
+a separate chezmoi profile
 for this collection. It copies the mods into your Herdr app home and keeps your
 personal settings and existing layouts. Your other chezmoi profiles are unaffected.
 If `~/.local/bin` is not on PATH, the command installation tells you where to
 find the binary and how to install it on PATH.
 
 You'll need chezmoi and Node.js 24.12+ to follow these steps. Individual mods
-document any additional build requirements in their own folders.
+document any additional build requirements in their own folders. Missing tools
+are reported before deployment, with Brew/mise commands or installation links.
+
+Already have a checkout elsewhere? Run `sh setup.sh --source /path/to/checkout`.
+A standalone copy of `setup.sh` also accepts `--repo <repository-url>`: chezmoi
+clones into its own source directory, leaving your other profiles alone. This
+repository has no published remote yet; see [setup options](docs/chezmoi.md).
 
 #### Make them visible in Herdr
 
@@ -63,7 +65,8 @@ herdr-mods apply
 
 You can also edit an installed mod and bring the changes back with
 `herdr-mods re-add`. See [the chezmoi guide](docs/chezmoi.md) for that workflow,
-custom paths, and profile settings. Each computer needs its own setup.
+custom paths, and profile settings. Executables rebuild when their source changes
+and are restored if missing. Each computer needs its own setup.
 
 ### I only want one mod
 
@@ -97,11 +100,14 @@ supported settings.
 ## How installation hooks work
 
 A mod can declare an `install` command in `mod.meta.json` as an argument array.
-`herdr-mods approve` shows these commands and asks which may run on apply.
+Setup and apply show new commands together and offer to run all, choose
+individually, skip all, or cancel. `--yes` accepts them noninteractively.
 Chezmoi copies the files first, then runs approved commands from their installed
 package directories, with `HERDR_MOD_DIR` and `HERDR_APP_HOME` set. Commands run
 without an implicit shell. Changed command arrays need approval again.
 
+Build metadata describes source inputs, output files, and required tools.
+Chezmoi onchange hooks use source checksums and missing outputs to trigger builds.
 These hooks build helpers or perform other additions; chezmoi handles copying
 and synchronization. Failed hooks report failure while leaving the copied files
 in place. The details are in [the chezmoi guide](docs/chezmoi.md).

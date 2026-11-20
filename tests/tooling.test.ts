@@ -96,6 +96,22 @@ test("repository rules accept the tree and reject invalid manifests and license 
         { install: [""] },
         { install: ["go", 42] },
         { typo: true },
+        {
+            build: {
+                description: "Build",
+                inputs: ["helper/**"],
+                outputs: ["../escape"],
+                requires: [],
+            },
+        },
+        {
+            build: {
+                description: "Build",
+                inputs: [],
+                outputs: ["bin/helper"],
+                requires: [],
+            },
+        },
     ]) {
         json(metadata(root), { ...original, ...change });
         assert.throws(() => validate(root));

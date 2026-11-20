@@ -95,8 +95,8 @@ cd "$HERDR_APP_HOME/mods/pr-panel"
 HERDR_MOD_DIR="$PWD" node install.ts
 ```
 
-The build requires Node.js 24.12+ and Go 1.23+. With chezmoi, approve the declared
-build command using `herdr-mods approve`; it runs after copying on apply.
+The build requires Node.js 24.12+ and Go 1.23+. With chezmoi, setup and apply offer the declared
+build command. It runs after copying when inputs change or the helper is missing.
 PR queries require a working helper.
 
 Configuration is separate from metadata: `settings.json`, then alphabetically

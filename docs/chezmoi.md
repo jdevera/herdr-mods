@@ -1,131 +1,138 @@
-# Keep mods in sync with chezmoi
+# Set up and update the collection
 
-## Install the collection
+## Install everything
 
-Follow [Install in the README](../README.md#install) to install the command,
-configure the profile, apply all mods, and have an agent integrate them into Herdr.
+From a checkout:
 
-Chezmoi copies complete packages from `mods/` into your Herdr app home. Code,
-tests, fixtures, helper source, documentation, and licenses travel together.
-The `herdr-mods` executable supplies a separate profile for this collection.
+```sh
+sh setup.sh
+```
 
-## Apply updates from the checkout
+Setup checks prerequisites, lets you choose the mod build commands, installs the
+`herdr-mods` executable, and applies the mods through an isolated chezmoi profile.
+It explains what it is doing and leaves conflict decisions to chezmoi. Follow the
+README's agent prompt to integrate the installed mods into your Herdr layout.
 
-After editing or updating the source:
+To reuse a particular checkout:
+
+```sh
+sh setup.sh --source /path/to/herdr-mods
+```
+
+To let chezmoi clone first, use a standalone copy of `setup.sh`:
+
+```sh
+sh /path/to/setup.sh --repo <repository-url>
+```
+
+The clone goes into `$XDG_DATA_HOME/herdr-mods`, defaulting to
+`~/.local/share/herdr-mods`. `--branch NAME` selects its initial branch. This
+repository has no published remote yet, so no download URL is advertised. The
+bootstrap is self-contained; once published it can be downloaded without cloning
+first. It explicitly sets chezmoi's source, destination, config, generated-config,
+cache, and state paths instead of using another profile's defaults.
+
+Requirements are checked before deployment. Missing chezmoi on macOS gets a
+`brew install chezmoi` suggestion; other systems get the official install URL.
+Node.js must be 24.12+; the suggested installation is `mise use --global node@24`.
+The bootstrap also checks npm and Git. Approved builds declare extra tools in
+metadata. Nothing installs those tools or edits your shell configuration for you.
+
+Setup can be rerun. It reuses existing profile paths and choices; `--source` can
+point the profile at another checkout without moving or deleting either checkout.
+Use `--destination PATH` to change the Herdr app home and `--bin-dir PATH` to
+select another executable directory already on PATH. The defaults are
+`HERDR_APP_HOME` (otherwise `~/.config/herdr-app`) and `~/.local/bin`.
+
+## Apply changes and update executables
+
+After editing the checkout:
 
 ```sh
 herdr-mods diff
 herdr-mods apply
 ```
 
-Once the checkout has a Git remote, you can pull changes for review with:
+Once the checkout has a remote:
 
 ```sh
-herdr-mods update --apply=false
-herdr-mods diff
-herdr-mods apply
+herdr-mods update
 ```
 
-Without a remote there is nothing to pull. Each computer needs its own checkout
-and profile; a remote Herdr connection does not synchronize mod files.
+Update lets chezmoi pull first, offers any new build commands, then applies. For
+review before applying, use `herdr-mods update --apply=false`, then diff and apply.
+The wrapper does not reset or clean your checkout. Chezmoi's ordinary Git update
+and file-conflict behavior remains in effect. Each computer has its own profile.
+
+Separate `run_onchange_after_` hooks update the command and mod helpers. Their
+rendered contents include checksums of build inputs, the target platform, and
+output presence. Missing outputs include a fresh token, so deletion immediately
+after a first build also triggers recovery. The following present-state run is
+cheap: source fingerprints and existing outputs let build scripts skip work.
+Changes to helper inputs do not rebuild the main executable.
+
+Builds write temporary executables and replace existing files only after success.
+A failed build leaves the previous executable available, and the next apply
+retries. The command's embedded Node runtime is built locally and ad-hoc signed
+on macOS; it is not notarized. Its licenses are embedded (`herdr-mods --licenses`).
+Other platforms remain unverified. Set `NODE_LICENSE_FILE` when building if your
+Node distribution keeps LICENSE outside its installation root.
+
+If `herdr-mods` itself was deleted, rerun `sh setup.sh` (or invoke chezmoi with the
+profile's explicit flags). You do not need to clear chezmoi's state database.
+
+## Choose build commands
+
+Setup and apply show new or changed command arrays, their descriptions, and working
+directories together. Choose **all**, **individually**, **none**, or **cancel**.
+`--yes` accepts the displayed commands; it never adds chezmoi's `--force` flag.
+Declined commands are remembered until their argv changes. A skipped build may
+leave that mod's features unavailable. Noninteractive runs with undecided commands
+fail with instructions to rerun interactively or use `--yes`.
+
+Use `herdr-mods approve` to revisit choices or `herdr-mods revoke` to disable the
+current commands. Approval trusts package code, not just argv; review source
+updates as well. Dry-run and diff do not ask questions, change approvals, or build.
+
+After copying, approved commands run from their installed package directories
+with `HERDR_MOD_DIR` and `HERDR_APP_HOME`, without an implicit shell. Optional
+`build` metadata contains a description, package-relative input globs, output
+paths, and required executables. These declarations control builds, not which
+files get copied. Approved custom commands without build metadata run after every
+apply, so they must be safe to repeat. Complete packages still include tests, helper source, and legal
+files. User settings, dependencies, binaries, and generated files remain local.
 
 ## Bring installed edits back
 
-Edit the installed mod and run its tests, following its documentation. Then bring
-existing managed files back into the checkout:
+Edit an installed mod and run its tests, then:
 
 ```sh
 herdr-mods re-add /path/to/installed/mod
-```
-
-For a new file:
-
-```sh
+# For a new file:
 herdr-mods add /path/to/installed/mod/tests/new-feature.test.cjs
 ```
 
 Review `git diff` in the checkout and run `prek run --all-files` before committing.
-Do not add the whole Herdr app home. Avoid chezmoi's reserved source-name prefixes,
-such as `private_`, `executable_`, and `run_`, for ordinary new package files.
+Do not add the whole Herdr app home. Avoid chezmoi's reserved filename prefixes
+such as `private_`, `executable_`, and `run_` for ordinary source files.
+For conflicts, inspect diff and use merge or choose which copy to keep.
+Removing a source file does not automatically delete its installed copy; remove
+obsolete files explicitly after reviewing them.
 
-For conflicting edits, inspect `diff` and use `merge`, or explicitly choose the
-source or installed version. Removing a source file does not automatically remove
-its installed copy: inspect and remove obsolete installed files explicitly.
+## Profile locations and testing
 
-## Choose a different destination or profile
+`~/.config/herdr-mods/chezmoi.json` stores paths and build choices; it honors
+`XDG_CONFIG_HOME`. `HERDR_MODS_HOME` selects another profile directory, including
+its separate cache and persistent state. `HERDR_MODS_CHEZMOI` selects a chezmoi
+executable. Other profiles may manage layouts and settings, but must not manage
+the same mod source files.
 
-On first setup, select the Herdr app home explicitly:
+Tests use temporary profiles, destinations, and local Git repositories. They cover
+first setup, reuse, cloning, dependency failures, source updates, restoration,
+unchanged builds, failures preserving executables, and normal mod round-trips.
+The fast setup tests substitute compilation commands; the actual standalone
+binary and Go helper are also checked separately during release validation.
 
-```sh
-herdr-mods setup --source "$PWD" --destination /path/to/herdr-app
-herdr-mods info
-```
-
-Setup creates the destination directory if needed, but does not apply files.
-The default is `HERDR_APP_HOME`, or `~/.config/herdr-app`.
-
-Profile configuration is stored in `~/.config/herdr-mods/chezmoi.json`, honoring
-`XDG_CONFIG_HOME`. Set `HERDR_MODS_HOME` to use another profile directory. Config,
-cache, and persistent state are isolated from your other chezmoi profiles.
-Setup refuses to replace an existing profile; edit its JSON to change paths.
-
-Before applying over an existing installation, inspect the diff and back up
-packages with matching names. Other profiles may manage your settings and layouts,
-but should not manage the same mod source files. Settings, dependencies, generated
-API declarations, errors, binaries, caches, and editor junk stay local.
-
-## Command build and installation details
-
-Rebuild and reinstall the executable after changing its code:
-
-```sh
-npm ci
-npm run build:command
-npm run install:command
-```
-
-This requires Node.js 24.12+. The build uses Node's single-executable support and
-produces `.build/command/herdr-mods` for the current OS and architecture. On macOS
-it is ad-hoc signed with `codesign`, not notarized. Other platforms remain unverified.
-The binary embeds its runtime and licenses (`herdr-mods --licenses`). Set
-`NODE_LICENSE_FILE` at build time if your Node distribution keeps LICENSE outside
-its installation root.
-
-Installation replaces `~/.local/bin/herdr-mods` only when that directory is on
-PATH. Otherwise it leaves the built binary in place with installation instructions.
-It never edits shell startup files. Ordinary mod updates don't require rebuilding
-this command.
-
-The executable needs chezmoi on PATH, or a path in `HERDR_MODS_CHEZMOI`.
-Compatibility is tested with chezmoi 2.73.3 and 2.74.1. It needs no separate Node
-runtime, but individual mod build commands may need Node or other tools; consult
-each package's documentation.
-
-## How build approvals work
-
-`herdr-mods approve` reads each package’s `mod.meta.json` and displays its declared command and its installed working
-directory, then asks whether it may run on apply. `approve --yes` accepts the
-commands noninteractively; `revoke` disables them. Changed command arrays require
-approval again. Approval trusts the package code, so review source updates too.
-
-The after-script runs approved commands after copying, from the installed package,
-without an implicit shell. It sets `HERDR_MOD_DIR` and `HERDR_APP_HOME`. Dry-run
-never builds; repeat apply can rebuild missing helpers. Unapproved builds are
-reported and skipped. Failed builds fail the command while leaving copied files
-in place. Apply complete packages before building them.
-
-## Verification and references
-
-The integration test uses disposable source, destination, and profile directories.
-It checks complete-package copying, runnable installed tests, re-add/add, ignored
-files, preserved layouts and unrelated mods, conflicts, removals, command approval,
-dry-run, repeat apply, and failed builds. Set `HERDR_MODS_CHEZMOI` to test a
-particular version. The test is explicitly skipped when chezmoi is unavailable.
-Set `HERDR_MODS_TEST_COMMAND` to the compiled executable's absolute path to test
-that instead of the TypeScript entry point.
-
-References: [ignore rules](https://www.chezmoi.io/reference/special-files/chezmoiignore/),
-[re-add](https://www.chezmoi.io/reference/commands/re-add/),
-[update](https://www.chezmoi.io/reference/commands/update/),
-[scripts](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/),
-[Node single executables](https://nodejs.org/api/single-executable-applications.html).
+References: [init](https://www.chezmoi.io/reference/commands/init/),
+[scripts and onchange checksums](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/),
+[apply conflicts](https://www.chezmoi.io/reference/commands/apply/).

@@ -1,5 +1,17 @@
 {
   "description": "Pull request details, comments, checks, failed-job logs, and files for the current branch or repository.",
   "license": "Apache-2.0",
-  "install": ["node", "install.ts"]
+  "install": ["node", "install.ts"],
+  "build": {
+    "description": "Build the PR panel’s GitHub helper",
+    "inputs": [
+      "install.ts",
+      "helper/**/*.go",
+      "helper/go.mod",
+      "helper/go.sum"
+    ],
+    "outputs": ["bin/herdr-pr"],
+    "requires": ["go"]
+  },
+  "$comment": "Modified by Jacobo de Vera, 2026: declare helper build inputs, output, and requirements; see PROVENANCE.md."
 }

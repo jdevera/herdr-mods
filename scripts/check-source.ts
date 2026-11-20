@@ -22,4 +22,10 @@ if (go.error || go.status !== 0 || go.stdout.trim()) {
     failed = true;
 }
 
+const shell = spawnSync("sh", ["-n", "setup.sh"], { stdio: "inherit" });
+
+if (shell.error || shell.status !== 0) {
+    failed = true;
+}
+
 process.exitCode = failed ? 1 : 0;

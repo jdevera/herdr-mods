@@ -1,3 +1,4 @@
+import { current, fingerprint, record } from "./build-state.ts";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -8,11 +9,12 @@ export function postInstall(
     source: string,
     destination: string,
     approved: Record<string, string[]>,
+    mode: "build" | "custom" = "build",
 ): void {
     for (const mod of discover(source)) {
         const command = mod.metadata.install;
 
-        if (!command) {
+        if (!command || (mode === "build") !== Boolean(mod.metadata.build)) {
             continue;
         }
 
@@ -38,6 +40,25 @@ export function postInstall(
             );
         }
 
+        const build = mod.metadata.build;
+        const outputs = build?.outputs.map((path) => join(pkg, path)) ?? [];
+        const stamp = join(
+            destination,
+            ".herdr-mods-builds",
+            mod.id + ".sha256",
+        );
+
+        const digest = fingerprint(
+            pkg,
+            build?.inputs ?? [],
+            JSON.stringify(command) + process.platform + process.arch,
+        );
+
+        if (build && current(stamp, digest, outputs)) {
+            console.log(`${mod.id}: build is current.`);
+            continue;
+        }
+
         console.log(
             `${mod.id}: ${JSON.stringify(command)}\nWorking directory: ${pkg}`,
         );
@@ -55,6 +76,16 @@ export function postInstall(
             throw new Error(
                 `${mod.id}: files installed, but custom build failed: ${result.error?.message ?? result.status}`,
             );
+        }
+
+        if (build) {
+            if (!outputs.every((path) => existsSync(path))) {
+                throw new Error(
+                    `${mod.id}: build did not produce its declared outputs`,
+                );
+            }
+
+            record(stamp, digest);
         }
     }
 }

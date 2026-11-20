@@ -1,5 +1,12 @@
+{{ $custom := false -}}
+{{ range glob (joinPath .chezmoi.sourceDir "mods/*/mod.meta.json") -}}
+{{ $metadata := include . | fromJson -}}
+{{ if and (hasKey $metadata "install") (not (hasKey $metadata "build")) -}}
+{{ $custom = true -}}
+{{ end -}}
+{{ end -}}
+{{ if $custom -}}
 #!/usr/bin/env node
-// Approved commands: {{ if hasKey . "herdrModsCommands" }}{{ .herdrModsCommands | toJson }}{{ else }}{}{{ end }}
 (async () => {
     const { pathToFileURL } = await import("node:url");
     const { join } = await import("node:path");
@@ -8,8 +15,9 @@
     const approved = {{ if hasKey . "herdrModsCommands" }}{{ .herdrModsCommands | toJson }}{{ else }}{}{{ end }};
     const { postInstall } = await import(pathToFileURL(join(source, "scripts/post-install.ts")).href);
 
-    postInstall(source, destination, approved);
+    postInstall(source, destination, approved, "custom");
 })().catch((error) => {
     console.error(error.message);
     process.exitCode = 1;
 });
+{{ end -}}

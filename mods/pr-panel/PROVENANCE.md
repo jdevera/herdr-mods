@@ -63,3 +63,6 @@ and chezmoi re-add. Repository checks still validate metadata against the centra
 Repository description, license identifier, and any build command are now in
 `mod.meta.json`. The Herdr manifest retains its title and runtime fields; tooling
 reads both without duplicating the title.
+
+Repository build metadata describes the helper's source inputs, output, and Go
+requirement so chezmoi can rebuild it on changes or restore a missing executable.

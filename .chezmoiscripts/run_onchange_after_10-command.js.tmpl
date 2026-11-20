@@ -1,0 +1,17 @@
+{{ if hasKey . "herdrModsBinDir" -}}
+#!/usr/bin/env node
+// Platform: {{ .chezmoi.os }}/{{ .chezmoi.arch }}
+// Present: {{ if stat (joinPath .herdrModsBinDir "herdr-mods") }}yes{{ else }}missing {{ uuidv4 }}{{ end }}
+{{ range $pattern := list "scripts/**/*.ts" "package.json" "package-lock.json" "LICENSE" -}}
+{{ range glob (joinPath $.chezmoi.sourceDir $pattern) -}}
+// Input: {{ . | toJson }} {{ include . | sha256sum }}
+{{ end -}}
+{{ end -}}
+const { spawnSync } = require("node:child_process");
+const result = spawnSync("node", [{{ joinPath .chezmoi.sourceDir "scripts/refresh-command.ts" | toJson }}], {
+    env: { ...process.env, HERDR_MODS_BIN_DIR: {{ .herdrModsBinDir | toJson }} },
+    stdio: "inherit",
+});
+if (result.error) console.error(result.error.message);
+process.exitCode = result.status ?? 1;
+{{ end -}}

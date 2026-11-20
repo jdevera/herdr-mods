@@ -10,6 +10,12 @@ export interface Metadata {
     description: string;
     license: string;
     install?: string[];
+    build?: {
+        description: string;
+        inputs: string[];
+        outputs: string[];
+        requires: string[];
+    };
 }
 
 export interface Mod {
@@ -66,6 +72,7 @@ export function readPackage(pkg: string): Mod {
                 "description",
                 "license",
                 "install",
+                "build",
                 "$schema",
                 "$comment",
             ].includes(field)
@@ -90,6 +97,42 @@ export function readPackage(pkg: string): Mod {
         throw new Error(
             `${pkg}/mod.meta.json: install must be a nonempty array of nonempty strings`,
         );
+    }
+
+    if (metadata.build !== undefined) {
+        const build = metadata.build as Metadata["build"];
+        const relativePath = (path: unknown) =>
+            typeof path === "string" &&
+            !!path &&
+            !path.startsWith("/") &&
+            !path.includes("\\") &&
+            !path.split("/").includes("..") &&
+            !path.includes("\0");
+
+        if (
+            !build ||
+            typeof build !== "object" ||
+            !metadata.install ||
+            typeof build.description !== "string" ||
+            !build.description.trim() ||
+            !Array.isArray(build.inputs) ||
+            !build.inputs.length ||
+            !build.inputs.every(relativePath) ||
+            !Array.isArray(build.outputs) ||
+            !build.outputs.length ||
+            !build.outputs.every(
+                (path) => relativePath(path) && !/[?*\[\]{}]/.test(path),
+            ) ||
+            !Array.isArray(build.requires) ||
+            !build.requires.every(
+                (name) =>
+                    typeof name === "string" && /^[a-zA-Z0-9._+-]+$/.test(name),
+            )
+        ) {
+            throw new Error(
+                `${pkg}/mod.meta.json: invalid build description, paths, or requirements`,
+            );
+        }
     }
 
     return {

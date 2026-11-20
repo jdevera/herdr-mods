@@ -85,9 +85,19 @@ test(
             return result.stdout;
         };
 
-        ok("setup", "--source", source, "--destination", destination);
-        assert.ok(existsSync(destination));
-        assert.notEqual(cli("setup", "--source", source).status, 0);
+        mkdirSync(profile);
+        mkdirSync(destination);
+        writeFileSync(
+            join(profile, "chezmoi.json"),
+            JSON.stringify({
+                sourceDir: source,
+                destDir: destination,
+                data: {
+                    herdrModsCommands: {},
+                    herdrModsDeclined: { "pr-panel": ["node", "install.ts"] },
+                },
+            }),
+        );
         assert.notEqual(cli("status", "--source", other).status, 0);
         write(source, "README.md", "root files must not deploy");
 
@@ -254,6 +264,8 @@ test(
         const metadataPath = join(source, "mods/pr-panel/mod.meta.json");
         const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
 
+        delete metadata.build;
+
         metadata.install = [
             process.execPath,
             "-e",
@@ -274,7 +286,7 @@ test(
         ok("apply", "--no-tty");
         metadata.install = [process.execPath, "-e", "process.exit(7)"];
         writeFileSync(metadataPath, JSON.stringify(metadata));
-        assert.match(ok("apply", "--no-tty"), /not approved/);
+        assert.notEqual(cli("apply", "--no-tty").status, 0);
         ok("approve", "--yes");
         const failed = cli("apply", "--no-tty");
 

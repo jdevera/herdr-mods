@@ -18,7 +18,10 @@ const built = join(
     process.platform === "win32" ? "herdr-mods.exe" : "herdr-mods",
 );
 
-const targetDir = join(homedir(), ".local/bin");
+const targetDir = resolve(
+    process.env.HERDR_MODS_BIN_DIR ?? join(homedir(), ".local/bin"),
+);
+
 const canonical = (path: string) =>
     existsSync(path) ? realpathSync(path) : resolve(path);
 
