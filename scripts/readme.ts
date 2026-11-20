@@ -26,9 +26,9 @@ export async function generate(root = PROJECT): Promise<boolean> {
 
     const rows = ["| Mod | Description | License |", "| --- | --- | --- |"];
 
-    for (const { id, manifest: m } of discover(root)) {
+    for (const { id, manifest: m, metadata } of discover(root)) {
         rows.push(
-            `| [${escape(m.title)}](mods/${id}/) | ${escape(m.description)} | ${escape(m.license)} |`,
+            `| [${escape(m.title)}](mods/${id}/) | ${escape(metadata.description)} | ${escape(metadata.license)} |`,
         );
     }
 

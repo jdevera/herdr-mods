@@ -22,16 +22,18 @@
 
 ## Mod conventions
 
-- Keep `main.js` and `mod.json` at each mod’s package root, with tests and helper source alongside them. Installed copies should support running and editing their own tests.
+- Keep `main.js`, `mod.json`, and `mod.meta.json` at each mod’s package root, with tests and helper source alongside them. Installed copies should support running and editing their own tests.
 
-- When importing or adapting a mod, separate metadata from user configuration. `mod.json` contains metadata only; never embed a `settings` object.
+- Herdr owns `mod.json`; keep its runtime fields there. Repository metadata belongs in `mod.meta.json` (description, license identifier, optional install argv). Read both files and reuse Herdr fields such as title rather than duplicating them. User configuration belongs only in `settings*.json`. Do not add repository fields or settings to the Herdr manifest.
 - Load `settings.json`, then `settings.*.json` in alphabetical (code-point) order. Recursively merge objects; later files override specified values. Keep defaults in code and describe configuration in `config.schema.json`.
-- The sole repository installer is `scripts/install.ts`: TypeScript run directly by Node.js 24.12+, using built-in modules only. Development checks may have their own dependencies.
-- A mod may declare an optional `install` command in `mod.json` as a nonempty array of nonempty strings. Never accept a shell command string.
-- Complete normal installation before offering custom commands. Show the exact command and ask before running it; `--yes` opts in. Run without an implicit shell from the mod's package directory, with `HERDR_MOD_DIR` and `HERDR_APP_HOME` pointing to the destination.
-- Custom commands handle additions or corrections, must be safe to rerun, and must not replace the shared installer. Preserve user settings and report post-install failures separately from successful file installation.
+- Chezmoi through `herdr-mods` is the repository installation and update workflow. Do not maintain a separate mod-copying installer or partial-install CLI. Keep packages independently copyable for agents.
+- A mod may declare an optional `install` command in `mod.meta.json` as a nonempty array of nonempty strings. Never accept a shell command string.
+- Show custom command arrays for approval with `herdr-mods approve`; `--yes` opts in. Run approved commands after chezmoi copies files, without an implicit shell, from the installed package directory, with `HERDR_MOD_DIR` and `HERDR_APP_HOME` pointing to the destination.
+- Custom commands handle additions or corrections, must be safe to rerun, and must not replace chezmoi file synchronization. Preserve user settings and report post-install failures separately from successful file installation.
 
-- Keep chezmoi optional: map complete packages directly, including tests and helper source. Exclude local settings and generated artifacts in both Git and deployment rules. Test ignore behavior and edits returning through re-add.
+- Map complete packages directly with chezmoi, including tests and helper source. Keep chezmoi-specific machinery outside mod packages. Exclude local settings and generated artifacts in both Git and deployment rules. Test ignore behavior and edits returning through re-add.
+- Write installation instructions in job-first order: what the user wants, commands, what they do, then requirements. Keep implementation details in a separate section.
+- Keep handwritten root README content generic. Mod-specific descriptions belong in the generated catalogue; setup, dependencies, configuration examples, and provenance belong in each mod's documentation.
 - `herdr-mods` is an installed executable, not a shell function. Keep its profile isolated from other chezmoi sources. Do not edit shell configuration to install it; use a directory already on PATH or give installation instructions.
 
 - Format code and configuration with Prettier. Use four-space indentation for TypeScript and JavaScript. Use blank lines between logical steps, blocks, and declarations; the ESLint autofix hook enforces vertical spacing in TypeScript. The prek hook formats automatically and stops the commit when files change; stage those changes and retry. Preserve license texts and retained notices verbatim.

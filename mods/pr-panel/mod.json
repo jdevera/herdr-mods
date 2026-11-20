@@ -2,8 +2,5 @@
   "version": "2.4.0",
   "place": "none",
   "title": "Pull request panel",
-  "description": "Pull request details, comments, checks, failed-job logs, and files for the current branch or repository.",
-  "license": "Apache-2.0",
-  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr mods integration and catalog metadata; see PROVENANCE.md.",
-  "install": ["node", "install.ts"]
+  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr integration; repository metadata separated into mod.meta.json. See PROVENANCE.md."
 }

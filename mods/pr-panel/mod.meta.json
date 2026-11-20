@@ -1,0 +1,5 @@
+{
+  "description": "Pull request details, comments, checks, failed-job logs, and files for the current branch or repository.",
+  "license": "Apache-2.0",
+  "install": ["node", "install.ts"]
+}

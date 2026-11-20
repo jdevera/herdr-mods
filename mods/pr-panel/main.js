@@ -47,7 +47,7 @@ const CONTEXT_POLL_MS = 1000;
 const REFRESH_INTERVAL_MS = 60000;
 const FIRST_LOAD_LIMIT_MS = 30000;
 const NOTICE_MS = 5000;
-// Preferences a person may change in the installed mod.json under `settings`.
+// Preferences loaded from settings.json and settings.*.json in the installed package.
 const DEFAULT_SETTINGS = {
     refresh: { every: "60s", search_debounce: "450ms" },
     list: { page_size: 25, default: { tab: "all", state: "open" } },

@@ -14,7 +14,8 @@ helper and tests remain alongside them. The upstream preview
 screenshot was removed. README and RECIPE were adapted for this repository. The recipe now documents
 actual caching, remote helper installation, layout integration, and read-only
 validation instead of upstream action-testing requirements.
-The helper installer now uses the new path and deploys license and provenance.
+The helper build resolves source within the package. Complete-package deployment
+includes all license and provenance files.
 Test paths were updated; Better Icons test data now lives under tests/fixtures.
 
 Modified runtime files:
@@ -37,15 +38,16 @@ prevent late responses from replacing the chosen PR. Failed-job logs are unchang
 Four regression tests cover round trips, empty lists, stale data, force refresh,
 filter/context isolation, and response ordering; all 77 JavaScript tests pass.
 
-Manifest and schema now include descriptions and license identifiers for repository discovery and validation.
+Repository descriptions and license identifiers live in `mod.meta.json` for discovery and validation.
 
 ## Repository conventions
 
 The maintained package is named `pr-panel`; upstream is still Branch PR.
-Metadata uses the shared repository schema. User configuration is loaded from
+`mod.json` retains Herdr fields; `mod.meta.json` uses the shared repository metadata schema. User configuration is loaded from
 `settings.json`, followed by `settings.*.json` in alphabetical order, with recursive
 object merging. Its schema is `config.schema.json`. The upstream Go
-installer was removed in favor of the repository Node installer. The original
+installer was removed. Chezmoi handles repository deployment; the package also
+supports direct copying. The original
 `install.ts` post-install script is MIT-licensed; see LICENSE-install.
 Runtime JavaScript and JSON were formatted with Prettier; behavior changes are
 recorded above and in the configuration loader.
@@ -57,3 +59,7 @@ schema references, and installation documentation were updated together.
 
 The repository-relative `$schema` metadata link was removed for unchanged copying
 and chezmoi re-add. Repository checks still validate metadata against the central schema.
+
+Repository description, license identifier, and any build command are now in
+`mod.meta.json`. The Herdr manifest retains its title and runtime fields; tooling
+reads both without duplicating the title.

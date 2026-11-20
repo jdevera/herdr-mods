@@ -152,6 +152,8 @@ test(
         );
 
         for (const path of [
+            "mod.json",
+            "mod.meta.json",
             "tests/pr.test.cjs",
             "helper/main.go",
             "helper/main_test.go",
@@ -249,15 +251,15 @@ test(
             existsSync(join(destination, "mods/pr-panel/tests/new.test.cjs")),
         );
 
-        const manifestPath = join(source, "mods/pr-panel/mod.json");
-        const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+        const metadataPath = join(source, "mods/pr-panel/mod.meta.json");
+        const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
 
-        manifest.install = [
+        metadata.install = [
             process.execPath,
             "-e",
             "require('node:fs').writeFileSync(process.env.HERDR_MOD_DIR+'/bin/built',process.cwd())",
         ];
-        writeFileSync(manifestPath, JSON.stringify(manifest));
+        writeFileSync(metadataPath, JSON.stringify(metadata));
         ok("approve", "--yes");
         ok("apply", "--dry-run", "--no-tty");
         assert.equal(
@@ -270,8 +272,8 @@ test(
             realpathSync(join(destination, "mods/pr-panel")),
         );
         ok("apply", "--no-tty");
-        manifest.install = [process.execPath, "-e", "process.exit(7)"];
-        writeFileSync(manifestPath, JSON.stringify(manifest));
+        metadata.install = [process.execPath, "-e", "process.exit(7)"];
+        writeFileSync(metadataPath, JSON.stringify(metadata));
         assert.match(ok("apply", "--no-tty"), /not approved/);
         ok("approve", "--yes");
         const failed = cli("apply", "--no-tty");

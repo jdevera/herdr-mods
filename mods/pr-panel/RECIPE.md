@@ -86,21 +86,23 @@ The viewing client needs the runtime; the repository machine needs the helper,
 Git, and authenticated `gh`. Local repositories need both on the same machine.
 Installing the package on each machine provides both roles.
 
-From the repository root, using Node.js 24.12+:
+Use the repository's chezmoi workflow, or copy this complete package to
+`$HERDR_APP_HOME/mods/pr-panel`, preserving existing settings and all legal files.
+For a manually copied package, build the helper on the target machine:
 
 ```sh
-node scripts/install.ts --mod pr-panel
+cd "$HERDR_APP_HOME/mods/pr-panel"
+HERDR_MOD_DIR="$PWD" node install.ts
 ```
 
-The shared installer copies the complete package, including tests and helper source, preserves user configuration,
-and backs up existing destinations. It then shows the manifest's `install` array
-and asks before running the helper build; `--yes` approves it. A custom Herdr home
-is the positional argument. The helper build requires Go 1.23+ on the target.
-If declined, explain that PR queries require an already installed helper.
+The build requires Node.js 24.12+ and Go 1.23+. With chezmoi, approve the declared
+build command using `herdr-mods approve`; it runs after copying on apply.
+PR queries require a working helper.
 
 Configuration is separate from metadata: `settings.json`, then alphabetically
-sorted `settings.*.json`. The schema is `config.schema.json`. The installer keeps
-existing files and migrates old embedded settings. For a previous `branch-pr`
+sorted `settings.*.json`. The schema is `config.schema.json`. Preserve these
+files on updates. Move any old embedded settings into standalone settings before
+replacing an older manifest. For a previous `branch-pr`
 installation, back it up, install `pr-panel`, then transfer preferences into the new
 standalone settings files. Update layout
 and command references together, and retain the old folder until verification.

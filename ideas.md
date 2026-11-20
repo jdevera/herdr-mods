@@ -31,7 +31,7 @@ without chezmoi and avoid rebuilding features chezmoi already provides.
 ## Keep sharing simple
 
 - **Generate a small mod catalogue.** Extend the README generated from each
-  `mod.json` with dependencies and installation steps, without a central manifest.
+  `mod.meta.json` and its Herdr manifest with dependencies and installation steps, without a central manifest.
 - **Check upstream changes.** Use each mod's provenance to report new upstream
   revisions for review; never silently replace local improvements or licenses.
 - **Build downloadable command binaries.** Once account ownership and a remote

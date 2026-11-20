@@ -1,3 +1,4 @@
+import { readPackage } from "./mod-package.ts";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
@@ -174,30 +175,14 @@ Layouts and personal settings are not managed. Review diff before apply.
                 continue;
             }
 
-            const manifest = JSON.parse(
-                readFileSync(
-                    join(profile.sourceDir, "mods", entry.name, "mod.json"),
-                    "utf8",
-                ),
+            const { metadata } = readPackage(
+                join(profile.sourceDir, "mods", entry.name),
             );
 
-            const argv: unknown = manifest.install;
+            const argv = metadata.install;
 
-            if (argv === undefined) {
+            if (!argv) {
                 continue;
-            }
-
-            if (
-                !Array.isArray(argv) ||
-                !argv.length ||
-                argv.some(
-                    (arg) =>
-                        typeof arg !== "string" ||
-                        !arg.trim() ||
-                        arg.includes("\0"),
-                )
-            ) {
-                throw new Error(`${entry.name}: invalid install argv`);
             }
 
             console.log(

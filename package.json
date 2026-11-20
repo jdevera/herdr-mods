@@ -6,7 +6,6 @@
     "node": ">=24.12.0"
   },
   "scripts": {
-    "install-mods": "node scripts/install.ts",
     "readme": "node scripts/readme.ts",
     "check:repo": "node scripts/check-repo.ts",
     "typecheck": "tsc --noEmit",

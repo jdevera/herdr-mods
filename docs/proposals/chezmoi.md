@@ -14,5 +14,5 @@ The installed `herdr-mods` executable supplies isolated config, cache, and state
 for a third profile. It replaces the originally proposed shell function.
 
 Layouts and personal settings remain user-owned. Complete packages still work
-with manual copying or the Node installer. No Git remote or account ownership is
+with manual copying. No Git remote or account ownership is
 chosen by this setup.

@@ -25,18 +25,18 @@ Read [RECIPE.md](RECIPE.md) and the source before installing; the agent explains
 <details>
 <summary>Install by hand</summary>
 
-From the repository root:
+Copy this complete package into `$HERDR_APP_HOME/mods/pr-panel`, preserving
+existing settings and all license/provenance files. Then build its helper on the
+target machine:
 
 ```sh
-node scripts/install.ts --mod pr-panel
+cd "$HERDR_APP_HOME/mods/pr-panel"
+HERDR_MOD_DIR="$PWD" node install.ts
 ```
 
-The shared installer copies the mod and its legal files, then offers the declared
-post-install command to build the helper. It preserves configuration and backs up
-existing files. `--yes` approves the extra step without prompting. Pass a target
-Herdr home as the positional argument when needed. Installation does not change
-layouts; follow the placement instructions below and validate the running client.
-Build on the target machine so the helper matches its OS and architecture.
+This needs Node.js 24.12+ and Go 1.23+. Follow the placement instructions below
+and validate the running client. To keep the whole collection synchronized, use
+[the repository's chezmoi workflow](../../docs/chezmoi.md).
 
 </details>
 
@@ -102,7 +102,7 @@ Put overrides directly in the installed `settings.json`, then optionally in
 with recursive object merging and later values taking precedence. Missing files
 use defaults. `config.schema.json` describes the settings and can be referenced
 with `"$schema": "./config.schema.json"`. Unknown keys, wrong types, and unreadable
-files are reported in the panel. The installer preserves these files on updates.
+files are reported in the panel. The chezmoi profile leaves these files local.
 The old upstream Better Config integration is not used by this separated format.
 
 | Key                       | Default              | What it does                                                                                       |
@@ -131,9 +131,9 @@ The defaults as a standalone settings file:
 
 ## Update
 
-Run `node scripts/install.ts --mod pr-panel` again from the repository root.
-It preserves standalone settings and migrates any embedded settings from an
-existing manifest in the destination, keeping a backup.
+With the repository profile configured, run `herdr-mods diff` and
+`herdr-mods apply`. For a manually copied package, update its source files while
+preserving settings, then rerun the helper build above.
 
 <details>
 <summary>Upgrading from 1.x</summary>
@@ -166,7 +166,7 @@ New worktree writes `branch.<name>.herdr-pr` to Git config, which the panel read
 - `main.js` lists what's where. `settings.js` reads the panel’s layered configuration.
 - `github/model.js` says what GitHub's answers mean, `github/` reads, and `actions/` writes and hands off. `state/saved.js` is what survives a reload: filters, the open PR, read comments.
 - `views/` draws with `views/ui.js`, and `icons/` holds the icons.
-- `helper/main.go` is the JSON bridge to `gh`, with validated requests and a 26-second timeout. `install.ts` is the optional post-install build step, invoked by the shared installer.
+- `helper/main.go` is the JSON bridge to `gh`, with validated requests and a 26-second timeout. `install.ts` is the optional post-install build step, invoked by the chezmoi after-script when approved.
 - `tests/` uses stand-ins for GitHub, so also look at the running app.
 
 ```sh

@@ -6,7 +6,9 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 if (!process.env.HERDR_MOD_DIR) {
-    throw new Error("Run through scripts/install.ts to supply HERDR_MOD_DIR");
+    throw new Error(
+        "Set HERDR_MOD_DIR to the installed mod directory before building",
+    );
 }
 
 const bin = join(process.env.HERDR_MOD_DIR, "bin");

@@ -2,7 +2,7 @@ repos:
   - repo: local
     hooks:
       - id: repo-rules
-        name: Manifest schemas and licensing rules
+        name: Repository metadata schemas and licensing rules
         language: system
         entry: npm run check:repo
         pass_filenames: false

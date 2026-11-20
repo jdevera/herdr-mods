@@ -14,95 +14,101 @@ Native UI mods for Herdr Desktop, supporting local and remote repositories.
 
 <!-- mods:end -->
 
-The **badge** is a small link to the current branch's PR. The **panel** shows its
-description, comments, checks, failed-job logs, and files. The **tab bar** provides
-the PRs button that opens the panel. The badge can be used independently.
-
-A layout tells Herdr where to put these pieces. [examples/layouts/main-pr.json](examples/layouts/main-pr.json)
-is a reference arrangement, not an installable mod or a replacement for your own layout.
+See [examples/](examples/) for example configurations and layouts. Follow each
+mod’s documentation when adapting them to your setup.
 
 ## Install
 
-For a personal setup that also brings installed edits back to this checkout,
-use the [isolated chezmoi profile](docs/chezmoi.md). It comes with an installable
-`herdr-mods` executable. The mods also work without chezmoi, using the installer
-below or by copying a complete package and following its recipe.
+### I want all the mods
 
-Requires Node.js 24.12+; the installer uses built-in modules only. No npm install,
-TypeScript compilation, or Python is needed to install mods.
+From this checkout, install the command and apply the collection with chezmoi:
 
 ```sh
-node scripts/install.ts
-# One mod, optionally with a custom Herdr config directory:
-node scripts/install.ts /path/to/herdr-home --mod pr-panel
-# Approve all declared post-install commands:
-node scripts/install.ts --yes
+npm ci
+npm run build:command
+npm run install:command
+herdr-mods setup --source "$PWD"
+herdr-mods approve
+herdr-mods diff
+herdr-mods apply
 ```
 
-The installer discovers each mod's `mod.json`, copies its complete package (including tests and helper source), licenses,
-provenance, and schema, and backs up existing installations. It preserves user
-settings files. Updates use the same command.
+This installs `herdr-mods` in `~/.local/bin` and creates a separate chezmoi profile
+for this collection. It copies the mods into your Herdr app home and keeps your
+personal settings and existing layouts. Your other chezmoi profiles are unaffected.
+If `~/.local/bin` is not on PATH, the command installation tells you where to
+find the binary and how to install it on PATH.
 
-After all files are installed, it shows each optional `install` command and asks
-whether to run it. These commands are strict argument arrays, executed without
-an implicit shell from the mod's source package directory. `HERDR_MOD_DIR` is the
-installed mod directory and `HERDR_APP_HOME` is the target app home. In a
-noninteractive session, commands are skipped unless `--yes` is given.
+You'll need chezmoi and Node.js 24.12+ to follow these steps. Individual mods
+document any additional build requirements in their own folders.
 
-The panel's extra step builds its Go helper. It needs Go 1.23+; declining leaves
-the UI files installed but PR queries require an existing helper. A failed extra
-step reports failure while leaving the installed files and backups available.
+#### Make them visible in Herdr
 
-### Make it visible in Herdr
+Give your agent this instruction:
 
-Installation does **not** change your layout. Each mod's `RECIPE.md` tells an
-agent how to inspect and integrate it, then validate the running UI:
+> Integrate the mods from this checkout into my Herdr layout. First run
+> `herdr-app --skill` and read `~/.config/herdr-app/AGENTS.md` (or
+> `$HERDR_APP_HOME/AGENTS.md` if set). Read each mod's `RECIPE.md`, preserve my
+> existing customizations, and follow the recipes to finish setup. Run
+> `herdr-app check`, inspect status, and visually verify the result.
 
-- [Panel setup](mods/pr-panel/RECIPE.md): add the panel and a way to open it.
-- [Tab bar setup](mods/pr-tab-bar/RECIPE.md): use the PRs launcher with that panel.
-- [Badge setup](mods/pr-badge/RECIPE.md): place the badge in the status bar.
+#### Keep them up to date
 
-You can ask an agent: “Install these mods, follow their recipes, and integrate
-them into my current Herdr layout while preserving my customizations.”
-The agent should read `herdr-app --skill` and the target client's installed
-`AGENTS.md`, inspect the layout, run `herdr-app check`, inspect status, and visually
-verify it. Copying files alone is not a completed UI setup.
+After updating or editing this checkout:
 
-For existing installs under the old names (`branch-pr`, `tabs-pr`, and
-`workspace-status-pr`), have the agent back up their configuration, install the new mods, transfer the
-preferences into their standalone settings files, and update layout and command
-references together. Keep the old installation until the new setup is verified.
+```sh
+herdr-mods diff
+herdr-mods apply
+```
 
-For remote setups, identify the repository host and viewing clients at deployment
-time. Install on each required machine: UI code runs on the viewing client;
-Git, authenticated `gh`, and the helper run on the repository machine. Links open
-on the viewing client. Source files do not automatically sync across computers.
+You can also edit an installed mod and bring the changes back with
+`herdr-mods re-add`. See [the chezmoi guide](docs/chezmoi.md) for that workflow,
+custom paths, and profile settings. Each computer needs its own setup.
+
+### I only want one mod
+
+Give your agent the repository address and the mod you want. Replace the
+placeholders in this prompt with a URL (or local checkout) and a mod name from
+the catalogue above:
+
+> Get `<mod-name>` from `<repository-url-or-path>` and integrate it into my Herdr.
+> First run `herdr-app --skill` and read `~/.config/herdr-app/AGENTS.md` (or
+> `$HERDR_APP_HOME/AGENTS.md` if set). Inspect the mod's source and `RECIPE.md`,
+> copy its complete package with licenses and provenance, and follow its setup
+> instructions. Preserve my settings and existing layout. Run `herdr-app check`,
+> inspect status, and visually verify the result.
+
+Each mod keeps its code, tests, helper source, and documentation together. Your
+agent can take the package directly; it doesn't need this repository's chezmoi
+profile or a separate installer.
 
 ## Configuration
 
-Metadata lives in `mod.json`. User preferences live in the installed mod folder:
+User preferences live in the installed mod folder:
 
 1. Code defaults.
 2. `settings.json`, if present.
 3. `settings.*.json`, sorted alphabetically by filename.
 
 Objects merge recursively; later files override only the values they specify.
-For example, `settings.local.json` can contain:
+Consult the mod’s documentation and `config.schema.json`, when provided, for
+supported settings.
 
-```json
-{
-  "$schema": "./config.schema.json",
-  "refresh": { "every": "90s" }
-}
-```
+## How installation hooks work
 
-The panel's `config.schema.json` describes its settings. Invalid files or values
-are reported in the panel. The installer migrates embedded settings from older
-manifests, with existing standalone configuration taking precedence.
+A mod can declare an `install` command in `mod.meta.json` as an argument array.
+`herdr-mods approve` shows these commands and asks which may run on apply.
+Chezmoi copies the files first, then runs approved commands from their installed
+package directories, with `HERDR_MOD_DIR` and `HERDR_APP_HOME` set. Commands run
+without an implicit shell. Changed command arrays need approval again.
+
+These hooks build helpers or perform other additions; chezmoi handles copying
+and synchronization. Failed hooks report failure while leaving the copied files
+in place. The details are in [the chezmoi guide](docs/chezmoi.md).
 
 ## Development
 
-Tooling is TypeScript executed directly by Node. The optional standalone
+Tooling is TypeScript executed directly by Node. The standalone
 `herdr-mods` executable has its own build step. Herdr's
 native runtime files remain JavaScript. Install the development dependencies and
 activate the hooks once per clone:
@@ -114,15 +120,18 @@ prek run --all-files
 ```
 
 Checks cover TypeScript types and lint, JavaScript syntax, Go formatting and vet,
-manifest/configuration schemas, required files, license text and provenance, and
+repository-metadata/configuration schemas, required files, license text and provenance, and
 Node/Go tests. `npm run format` runs Prettier; the commit hook also formats files
 automatically. TypeScript uses four-space indentation and ESLint-enforced blank
 lines between logical steps; `npm run lint:fix` applies those spacing rules.
 If formatting changes anything, stage the changes and retry.
 License texts, retained notices, and generated API declarations are excluded.
 
-Each mod's manifest is the source for its title, description, license, and optional
-post-install command. The shared schema is [schemas/mod.schema.json](schemas/mod.schema.json).
+Herdr owns `mod.json`, including the mod's title and runtime options. Our
+`mod.meta.json` holds the catalogue description, license identifier, and optional
+build command. This is a repository convention, not a Herdr standard. Tooling
+reads both files and uses the title from `mod.json` without duplicating it.
+Our metadata schema is [schemas/mod.meta.schema.json](schemas/mod.meta.schema.json).
 The README hook regenerates the Included table. If it changes, the commit fails:
 review and stage README.md, then retry. `npm run readme` does the same manually
 (exit 1 means it wrote changes). There is no separate mod catalog.
@@ -131,7 +140,4 @@ review and stage README.md, then retry. `npm run readme` does the same manually
 
 MIT for original repository tooling and documentation, with third-party
 exceptions in [LICENSING.md](LICENSING.md). Each mod carries its own LICENSE and
-PROVENANCE.md. The maintained PR panel derives from Munza's Branch PR;
-the badge and tab bar derive from Herdr's shipped UI.
-
-See [the PR panel brief](docs/pr-panel.md) for research and background.
+PROVENANCE.md describing its authorship and any reused material.

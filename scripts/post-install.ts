@@ -1,7 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { discover, readJson } from "./mods.ts";
+import { discover } from "./mods.ts";
+import { readPackage } from "./mod-package.ts";
 
 export function postInstall(
     source: string,
@@ -9,7 +10,7 @@ export function postInstall(
     approved: Record<string, string[]>,
 ): void {
     for (const mod of discover(source)) {
-        const command = mod.manifest.install;
+        const command = mod.metadata.install;
 
         if (!command) {
             continue;
@@ -29,9 +30,7 @@ export function postInstall(
             continue;
         }
 
-        const installed = readJson(join(pkg, "mod.json")) as {
-            install?: string[];
-        };
+        const installed = readPackage(pkg).metadata;
 
         if (JSON.stringify(installed.install) !== JSON.stringify(command)) {
             throw new Error(

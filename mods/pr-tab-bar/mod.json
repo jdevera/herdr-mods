@@ -5,7 +5,5 @@
     "name": "tabs",
     "version": "0.1.16"
   },
-  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr mods integration and catalog metadata; see PROVENANCE.md.",
-  "description": "Herdr tab bar with a PR panel toggle and per-space panel selection.",
-  "license": "Apache-2.0"
+  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr integration; repository metadata separated into mod.meta.json. See PROVENANCE.md."
 }

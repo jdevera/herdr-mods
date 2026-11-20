@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, globSync, readFileSync } from "node:fs";
-import { join, relative, resolve, sep } from "node:path";
+import { join } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { PROJECT, discover, isMain, readJson } from "./mods.ts";
 
@@ -51,7 +51,7 @@ export function validate(root = PROJECT): void {
     });
 
     const schema = ajv.compile(
-        readJson(join(root, "schemas/mod.schema.json")) as object,
+        readJson(join(root, "schemas/mod.meta.schema.json")) as object,
     );
 
     const licensing = readFileSync(join(root, "LICENSING.md"), "utf8");
@@ -66,22 +66,8 @@ export function validate(root = PROJECT): void {
     license(join(root, "examples/layouts/LICENSE"), "Apache-2.0");
 
     for (const mod of discover(root)) {
-        if (!schema(mod.manifest)) {
+        if (!schema(mod.metadata)) {
             throw new Error(`${mod.id}: ${ajv.errorsText(schema.errors)}`);
-        }
-
-        if (mod.manifest.$schema) {
-            const path = resolve(mod.source, mod.manifest.$schema);
-
-            if (relative(root, path).startsWith(`..${sep}`)) {
-                throw new Error(`${mod.id}: schema must be local`);
-            }
-
-            const own = ajv.compile(readJson(path) as object);
-
-            if (!own(mod.manifest)) {
-                throw new Error(`${mod.id}: ${ajv.errorsText(own.errors)}`);
-            }
         }
 
         if (!existsSync(join(mod.source, "main.js"))) {
@@ -92,7 +78,7 @@ export function validate(root = PROJECT): void {
             throw new Error(`${mod.id}: missing setup recipe`);
         }
 
-        license(join(mod.package, "LICENSE"), mod.manifest.license);
+        license(join(mod.package, "LICENSE"), mod.metadata.license);
         const provenance = readFileSync(
             join(mod.package, "PROVENANCE.md"),
             "utf8",
@@ -100,16 +86,16 @@ export function validate(root = PROJECT): void {
 
         for (const token of [
             "License:",
-            mod.manifest.license,
+            mod.metadata.license,
             "Local modifications:",
-            mod.manifest.license === "Apache-2.0" ? "Upstream:" : "Source:",
+            mod.metadata.license === "Apache-2.0" ? "Upstream:" : "Source:",
         ]) {
             if (!provenance.includes(token)) {
                 throw new Error(`${mod.id}: provenance missing ${token}`);
             }
         }
 
-        if (mod.manifest.license === "Apache-2.0") {
+        if (mod.metadata.license === "Apache-2.0") {
             if (!readFileSync(join(mod.package, "NOTICE"), "utf8").trim()) {
                 throw new Error(`${mod.id}: empty NOTICE`);
             }
@@ -157,7 +143,7 @@ export function validate(root = PROJECT): void {
     }
 
     console.log(
-        "Manifest schemas, configuration schemas, required files, licenses and provenance passed",
+        "Repository metadata schemas, configuration schemas, required files, licenses and provenance passed",
     );
 }
 

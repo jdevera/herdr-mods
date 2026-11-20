@@ -15,3 +15,7 @@ RECIPE.md is original MIT-licensed setup documentation; see LICENSE-recipe.
 
 The repository-relative `$schema` metadata link was removed for unchanged copying
 and chezmoi re-add. Repository checks still validate metadata against the central schema.
+
+Repository description, license identifier, and any build command are now in
+`mod.meta.json`. The Herdr manifest retains its title and runtime fields; tooling
+reads both without duplicating the title.
