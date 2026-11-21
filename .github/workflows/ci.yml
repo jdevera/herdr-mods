@@ -31,8 +31,9 @@ jobs:
           cache: false
       - name: Install chezmoi
         run: |
-          go install github.com/twpayne/chezmoi/v2@v2.74.1
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          curl -fsSL https://raw.githubusercontent.com/twpayne/chezmoi/v2.74.1/assets/scripts/install.sh -o "$RUNNER_TEMP/install-chezmoi.sh"
+          sh "$RUNNER_TEMP/install-chezmoi.sh" -b "$RUNNER_TEMP/bin" -t v2.74.1
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
       - run: chezmoi --version
       - run: npm ci
       - run: npm run check:repo
