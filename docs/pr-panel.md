@@ -31,10 +31,12 @@ Alternatives:
 - Redline: https://herdr.dev/mods/iampedii/herdr-redline/
   A broader review workflow with worktrees, diffs, approvals and replies.
 
-## Installed result
+## Earlier deployment validation
 
-Validated with both local and remote repository access. The PRs tab-bar button toggles
-`pr-panel` inside the existing `main-pr` panel stack. The colored badge remains.
+Validated with both local and remote repository access. The earlier replacement tab bar toggled the panel inside `main-pr`. The current
+design instead uses the panel package's button mode beside stock Herdr tabs, and a
+standalone MIT PR status badge beside the stock status bar. See each package's
+recipe for current integration and migration instructions.
 
 The upstream implementation used the viewer's GitHub login even for remote
 spaces. Testing exposed private-repository access failure on the viewing client. The

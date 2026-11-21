@@ -24,6 +24,8 @@
 
 - Keep `main.js`, `mod.json`, and `mod.meta.json` at each mod’s package root, with tests and helper source alongside them. Installed copies should support running and editing their own tests.
 
+- Compose standalone controls beside stock Herdr bars; do not copy a whole bar to add a button or badge. The PR panel owns its lightweight button mode.
+- Keep mod icon assets in an `icons/` subfolder.
 - Herdr owns `mod.json`; keep its runtime fields there. Repository metadata belongs in `mod.meta.json` (description, license identifier, optional install argv and build inputs/outputs/requirements). Read both files and reuse Herdr fields such as title rather than duplicating them. User configuration belongs only in `settings*.json`. Do not add repository fields or settings to the Herdr manifest.
 - Load `settings.json`, then `settings.*.json` in alphabetical (code-point) order. Recursively merge objects; later files override specified values. Keep defaults in code and describe configuration in `config.schema.json`.
 - Chezmoi through `herdr-mods` is the repository installation and update workflow. Do not maintain a separate mod-copying installer or partial-install CLI. Keep packages independently copyable for agents.

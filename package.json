@@ -12,7 +12,7 @@
     "lint": "eslint scripts tests mods/*/install.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test tests/*.test.ts mods/pr-panel/tests/*.test.cjs && go -C mods/pr-panel/helper test ./...",
+    "test": "node --test tests/*.test.ts mods/*/tests/*.test.cjs && go -C mods/pr-panel/helper test ./...",
     "lint:fix": "eslint scripts tests mods/*/install.ts --fix",
     "build:command": "node scripts/build-command.ts",
     "install:command": "node scripts/install-command.ts"

@@ -50,7 +50,7 @@ test("discovers package-root manifests and generates an idempotent README sectio
 
     assert.deepEqual(
         discover(root).map((m) => m.id),
-        ["pr-badge", "pr-panel", "pr-tab-bar"],
+        ["pr-panel", "pr-status-badge"],
     );
     json(metadata(root), {
         ...(readJson(metadata(root)) as object),

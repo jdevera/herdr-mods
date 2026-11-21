@@ -66,3 +66,9 @@ reads both without duplicating the title.
 
 Repository build metadata describes the helper's source inputs, output, and Go
 requirement so chezmoi can rebuild it on changes or restore a missing executable.
+
+The integrated `button.js` is original MIT-licensed work, covered by LICENSE-button.
+`main.js` dispatches button mode before any panel initialization. Visibility checks
+exclude button instances so hidden panels do not poll because their toggle is visible.
+The button uses Herdr's existing panel-selection commands and shared panel registry;
+the stock tab bar owns per-space panel restoration.

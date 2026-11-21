@@ -26,6 +26,7 @@ const FILES = [
     "views/checks.js",
     "views/worktrees.js",
     "views/files.js",
+    "button.js",
     "main.js",
 ];
 const source =
@@ -42,6 +43,8 @@ function harness({
     hc,
     known = [],
     home = "/app",
+    props = {},
+    sharedState = {},
 } = {}) {
     const pending = [],
         timers = [],
@@ -116,7 +119,7 @@ function harness({
             this.selected = r;
         },
     });
-    const live = { spaces: [], panes: [], agents: [], shared: {} };
+    const live = { spaces: [], panes: [], agents: [], shared: sharedState };
     const context = {
         View: class {},
         div: el,
@@ -135,6 +138,7 @@ function harness({
         InputState: { new: state },
         TextareaState: { new: state },
         checking: () => false,
+        props: () => props,
         spaces: () => live.spaces,
         panes: () => live.panes,
         agents: () => live.agents,
@@ -183,6 +187,7 @@ function harness({
     mod.listLoaded = true;
     return {
         mod,
+        timers,
         cx,
         live,
         storage,
@@ -2252,4 +2257,83 @@ test("a cached PR navigation invalidates an older in-flight detail response", as
     assert.equal(h.mod.detailLoading, true);
     done(PR());
     await h.flush();
+});
+
+test("button mode skips panel initialization and preserves panel registration", async () => {
+    let calls = 0;
+    const h = harness({
+        props: { mode: "button" },
+        sharedState: { "workspace.panels": ["changes"] },
+        exec: async () => {
+            calls++;
+            throw new Error("unexpected GitHub read");
+        },
+    });
+    assert.equal(h.mod.search, undefined);
+    assert.equal(h.mod.editor, undefined);
+    assert.equal(h.mod.settings, undefined);
+    assert.equal(h.timers.length, 0);
+    same(h.live.shared["workspace.panels"], ["changes", "pull-requests"]);
+    await h.flush();
+    assert.equal(calls, 0);
+
+    const again = new h.context.Mod();
+    again.init({}, h.cx);
+    same(h.live.shared["workspace.panels"], ["changes", "pull-requests"]);
+    const empty = harness({
+        props: { mode: "button" },
+        sharedState: { "workspace.panels": [] },
+    });
+    same(empty.live.shared["workspace.panels"], ["pull-requests"]);
+});
+
+test("integrated button selects, opens, and closes a custom panel target", () => {
+    const h = harness({
+        props: {
+            mode: "button",
+            container: "side",
+            stack: "views",
+            target: "prs",
+        },
+    });
+    h.live.layout = {
+        id: "side",
+        hidden: true,
+        children: [
+            {
+                id: "views",
+                type: "stack",
+                active: "files",
+                children: [{ id: "prs", content: { mod: "pr-panel" } }],
+            },
+        ],
+    };
+    click(h.mod.render(), "pr-panel-toggle", h);
+    same(h.ran, [
+        ["layout.select", { stack: "views", child: "prs" }],
+        ["layout.show", { id: "side" }],
+    ]);
+    h.ran.length = 0;
+    h.live.layout.hidden = false;
+    h.live.layout.children[0].active = "prs";
+    click(h.mod.render(), "pr-panel-toggle", h);
+    same(h.ran, [["layout.hide", { id: "side" }]]);
+    h.live.layout = null;
+    const button = find(h.mod.render(), "pr-panel-toggle");
+    assert.equal(button.handlers.click, undefined);
+    assert.match(button.tooltip, /Add the PR panel/);
+});
+
+test("visible toggle does not make a hidden panel count as visible", () => {
+    const h = harness({ props: { mode: "button" } });
+    const tree = {
+        type: "row",
+        children: [
+            { content: { mod: "pr-panel", props: { mode: "button" } } },
+            { hidden: true, content: { mod: "pr-panel" } },
+        ],
+    };
+    assert.equal(h.context.panelShown(tree, "pr-panel"), false);
+    tree.children[1].hidden = false;
+    assert.equal(h.context.panelShown(tree, "pr-panel"), true);
 });

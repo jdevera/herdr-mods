@@ -1,9 +1,0 @@
-{
-  "place": "none",
-  "cloned_from": {
-    "name": "workspace-status",
-    "version": "0.1.16"
-  },
-  "$comment": "Modified by Jacobo de Vera, 2026: local Herdr integration; repository metadata separated into mod.meta.json. See PROVENANCE.md.",
-  "title": "Pull request badge"
-}

@@ -17,6 +17,7 @@ import { View } from "gpui-kit";
 import { InputState, TextareaState } from "gpui-base";
 import {
     spaces,
+    props,
     panes,
     checking,
     nextCommand,
@@ -42,6 +43,7 @@ import { worktreeViewMethods } from "./views/worktrees.js";
 import { filesMethods } from "./views/files.js";
 import { panelShown, ghProblem } from "./github/model.js";
 import { Panel } from "./views/ui.js";
+import { createPanelButton, renderPanelButton } from "./button.js";
 
 const CONTEXT_POLL_MS = 1000;
 const REFRESH_INTERVAL_MS = 60000;
@@ -86,6 +88,12 @@ function spaceContextKey(space) {
 
 class PullRequests extends View {
     init(_props, cx) {
+        const options = props();
+        if (options?.mode === "button") {
+            this.button = createPanelButton(options);
+            return;
+        }
+
         this.view = localStorage.getItem("view") === "all" ? "all" : "branch";
         this.reopenSaved = true;
         this.closedGroups = new Set(this.readStoredList("closed-groups"));
@@ -295,6 +303,8 @@ class PullRequests extends View {
     }
 
     render() {
+        if (this.button) return renderPanelButton(this.button);
+
         const root = Panel({ id: "pr-root" });
         const problem = ghProblem(this.error);
         if (problem) return this.renderGhProblem(root, problem);

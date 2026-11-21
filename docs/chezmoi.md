@@ -5,11 +5,12 @@
 From a checkout:
 
 ```sh
-sh setup.sh
+./setup.sh
 ```
 
 Setup checks prerequisites, lets you choose the mod build commands, installs the
-`herdr-mods` executable, and applies the mods through an isolated chezmoi profile.
+`herdr-mods` executable, and applies the mods through an isolated
+[chezmoi](https://www.chezmoi.io/) profile.
 It explains what it is doing and leaves conflict decisions to chezmoi. Follow the
 README's agent prompt to integrate the installed mods into your Herdr layout.
 
@@ -26,9 +27,8 @@ sh /path/to/setup.sh --repo https://github.com/jdevera/herdr-mods.git
 ```
 
 The clone goes into `$XDG_DATA_HOME/herdr-mods`, defaulting to
-`~/.local/share/herdr-mods`. `--branch NAME` selects its initial branch. The
-[README](../README.md#install) provides a download-and-run command without an
-existing checkout. It explicitly sets chezmoi's source, destination, config, generated-config,
+`~/.local/share/herdr-mods`. `--branch NAME` selects its initial branch. Setup
+explicitly sets chezmoi's source, destination, config, generated-config,
 cache, and state paths instead of using another profile's defaults.
 
 Requirements are checked before deployment. Missing chezmoi on macOS gets a

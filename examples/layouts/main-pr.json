@@ -76,15 +76,35 @@
       "type": "column",
       "children": [
         {
-          "id": "tabs",
-          "type": "block",
-          "content": {
-            "mod": "pr-tab-bar"
-          },
+          "id": "tab-strip",
+          "type": "row",
           "size": {
             "px": 42
           },
-          "window_drag": true
+          "resizable": false,
+          "children": [
+            {
+              "id": "pr-toggle",
+              "type": "block",
+              "size": {
+                "px": 76
+              },
+              "content": {
+                "mod": "pr-panel",
+                "props": {
+                  "mode": "button"
+                }
+              }
+            },
+            {
+              "id": "tabs",
+              "type": "block",
+              "content": {
+                "mod": "tabs"
+              },
+              "window_drag": true
+            }
+          ]
         },
         {
           "id": "work-body",
@@ -164,14 +184,31 @@
           "gap": 8
         },
         {
-          "id": "status",
-          "type": "block",
-          "content": {
-            "mod": "pr-badge"
-          },
+          "id": "status-strip",
+          "type": "row",
           "size": {
             "px": 28
-          }
+          },
+          "resizable": false,
+          "children": [
+            {
+              "id": "status",
+              "type": "block",
+              "content": {
+                "mod": "workspace-status"
+              }
+            },
+            {
+              "id": "pr-status",
+              "type": "block",
+              "size": {
+                "px": 130
+              },
+              "content": {
+                "mod": "pr-status-badge"
+              }
+            }
+          ]
         }
       ],
       "resizable": false
@@ -185,5 +222,5 @@
   },
   "titlebar": "none",
   "traffic_lights": [12, 16],
-  "$comment": "Modified by Jacobo de Vera, 2026: PR badge, tab bar, and panel integration. Apache-2.0; see PROVENANCE.md."
+  "$comment": "Modified by Jacobo de Vera, 2026: standalone PR status badge and panel with integrated toggle beside stock Herdr bars. Apache-2.0; see PROVENANCE.md."
 }

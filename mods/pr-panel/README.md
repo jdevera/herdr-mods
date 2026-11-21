@@ -14,7 +14,11 @@ A pull-request panel for Herdr Desktop that shows what stands between a pull req
 
 Copy this prompt into your Herdr agent:
 
-> Read ~/.config/herdr-app/AGENTS.md, then add this mod: the local mods/pr-panel package; see the repository README for deployment
+```text
+Read ~/.config/herdr-app/AGENTS.md, then install pr-panel from
+https://github.com/jdevera/herdr-mods. Follow its RECIPE.md to add both the panel
+and its button to my existing layout, preserving the stock Herdr tab bar.
+```
 
 Requirements: **Node.js 24.12+** for installation and **Go 1.23+** to build the helper, Git on the machines your spaces run on, and the **GitHub CLI** logged in with `gh auth login` on the repository machine. Agent actions use `hc` and a running agent.
 
@@ -48,21 +52,21 @@ The manifest has `place: none`, so add it to a layout you own, about 368px wide:
 { "id": "pull-requests", "type": "block", "content": { "mod": "pr-panel" } }
 ```
 
-With [Better Tabs](https://github.com/munza/herdr-mods/tree/main/better-tabs), a button can open it (`target` is that block's layout ID):
+Add another block beside the stock tab bar for the integrated toggle:
 
 ```json
 {
-  "id": "prs",
-  "label": "PRs",
-  "icon": "mods/pr-panel/icons/pull-request.svg",
-  "action": {
-    "type": "panel",
-    "container": "panel",
-    "stack": "panel-body",
-    "target": "pull-requests"
-  }
+  "id": "pr-toggle",
+  "type": "block",
+  "size": { "px": 76 },
+  "content": { "mod": "pr-panel", "props": { "mode": "button" } }
 }
 ```
+
+The button controls `pull-requests` in the `panel-body` stack inside `panel`.
+Override `target`, `stack`, and `container` in its layout props if your IDs differ.
+It performs no GitHub queries. Keep the stock `tabs` mod; no separate button
+package is needed. See [RECIPE.md](RECIPE.md) for integration and migration.
 
 ## Use
 

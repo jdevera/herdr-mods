@@ -6,11 +6,10 @@ Native UI mods for Herdr Desktop, supporting local and remote repositories.
 
 <!-- mods:start -->
 
-| Mod                                      | Description                                                                                              | License    |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------- |
-| [Pull request badge](mods/pr-badge/)     | Current-branch PR badge with GitHub state colors and icons, including remote repositories.               | Apache-2.0 |
-| [Pull request panel](mods/pr-panel/)     | Pull request details, comments, checks, failed-job logs, and files for the current branch or repository. | Apache-2.0 |
-| [Pull request tab bar](mods/pr-tab-bar/) | Herdr tab bar with a PR panel toggle and per-space panel selection.                                      | Apache-2.0 |
+| Mod                                      | Description                                                                                          | License    |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- |
+| [Pull request panel](mods/pr-panel/)     | Pull request details, comments, checks, failed-job logs, and files, with an integrated panel toggle. | Apache-2.0 |
+| [PR status badge](mods/pr-status-badge/) | Standalone current-branch PR status badge linking to GitHub, with state colors and icons.            | MIT        |
 
 <!-- mods:end -->
 
@@ -22,11 +21,13 @@ mod’s documentation when adapting them to your setup.
 ### I want all the mods
 
 ```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/jdevera/herdr-mods/HEAD/setup.sh)" -- --repo https://github.com/jdevera/herdr-mods.git
+git clone https://github.com/jdevera/herdr-mods.git
+cd herdr-mods
+./setup.sh
 ```
 
-Chezmoi clones the repository into its own source directory. If you already have
-a checkout, run `sh setup.sh` there instead.
+This uses [chezmoi](https://www.chezmoi.io/) to install the mods and keep them up
+to date. If you already have a checkout, run `./setup.sh` there.
 
 Setup checks requirements, explains its steps, and offers the mod build commands
 as a group or individually. It installs `herdr-mods` in `~/.local/bin` and creates
@@ -47,11 +48,13 @@ See [setup options](docs/chezmoi.md) for custom paths and branches.
 
 Give your agent this instruction:
 
-> Integrate the mods from this checkout into my Herdr layout. First run
-> `herdr-app --skill` and read `~/.config/herdr-app/AGENTS.md` (or
-> `$HERDR_APP_HOME/AGENTS.md` if set). Read each mod's `RECIPE.md`, preserve my
-> existing customizations, and follow the recipes to finish setup. Run
-> `herdr-app check`, inspect status, and visually verify the result.
+```text
+Integrate the mods from this checkout into my Herdr layout. First run
+herdr-app --skill and read ~/.config/herdr-app/AGENTS.md (or
+$HERDR_APP_HOME/AGENTS.md if set). Read each mod's RECIPE.md, preserve my
+existing customizations, and follow the recipes to finish setup. Run
+herdr-app check, inspect status, and visually verify the result.
+```
 
 #### Keep them up to date
 
@@ -77,12 +80,14 @@ and are restored if missing. Each computer needs its own setup.
 
 Replace `<mod-name>` with a mod from the catalogue above:
 
-> Get `<mod-name>` from https://github.com/jdevera/herdr-mods and integrate it into my Herdr.
-> First run `herdr-app --skill` and read `~/.config/herdr-app/AGENTS.md` (or
-> `$HERDR_APP_HOME/AGENTS.md` if set). Inspect the mod's source and `RECIPE.md`,
-> copy its complete package with licenses and provenance, and follow its setup
-> instructions. Preserve my settings and existing layout. Run `herdr-app check`,
-> inspect status, and visually verify the result.
+```text
+Get <mod-name> from https://github.com/jdevera/herdr-mods and integrate it into my Herdr.
+First run herdr-app --skill and read ~/.config/herdr-app/AGENTS.md (or
+$HERDR_APP_HOME/AGENTS.md if set). Inspect the mod's source and RECIPE.md,
+copy its complete package with licenses and provenance, and follow its setup
+instructions. Preserve my settings and existing layout. Run herdr-app check,
+inspect status, and visually verify the result.
+```
 
 Each mod keeps its code, tests, helper source, and documentation together. Your
 agent can take the package directly; it doesn't need this repository's chezmoi

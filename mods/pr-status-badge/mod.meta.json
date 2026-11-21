@@ -1,0 +1,4 @@
+{
+  "description": "Standalone current-branch PR status badge linking to GitHub, with state colors and icons.",
+  "license": "MIT"
+}

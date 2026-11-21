@@ -55,7 +55,8 @@ export function ghProblem(message) {
 // shortcut: any shown copy counts for all copies; only matters with two copies in one layout.
 export function panelShown(node, mod) {
     if (!node || node.hidden) return false;
-    if (node.content?.mod === mod) return true;
+    if (node.content?.mod === mod && node.content.props?.mode !== "button")
+        return true;
     const children = node.children ?? [];
     if (node.type !== "stack")
         return children.some((child) => panelShown(child, mod));

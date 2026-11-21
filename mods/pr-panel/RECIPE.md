@@ -76,7 +76,7 @@ an actual operation.
 
 The package is `mods/pr-panel/` in this repository:
 
-- Package root: native UI, manifest, configuration schema, and SVG assets.
+- Package root: native UI, manifest, and configuration schema; `icons/` holds SVG assets.
 - `helper/`: Go helper and its tests.
 - `tests/`: JavaScript tests and optional-icon fixture data.
 - `LICENSE`, `NOTICE`, `PROVENANCE.md`: ship alongside the installed runtime.
@@ -125,10 +125,40 @@ A width around 480 logical pixels gives descriptions and checks room. Adapt to
 the client's screen. Preserve other panels, keys, and terminal arrangements.
 No global key binding is required.
 
-In this repository's `main-pr` layout, the block belongs to `panel-body` inside
-`panel`. Our separate `pr-tab-bar` mod provides the PRs button. Neither that layout
-nor that tab bar is a dependency for other users: integrate into their own UI.
-Do not install Better Tabs, Better Changes, or Better Icons unless requested.
+The same package also supplies the button. Add a second block beside the stock
+`tabs` block (about 76 pixels wide), using:
+
+```json
+{
+  "id": "pr-toggle",
+  "type": "block",
+  "content": {
+    "mod": "pr-panel",
+    "props": {
+      "mode": "button",
+      "container": "panel",
+      "stack": "panel-body",
+      "target": "pull-requests"
+    }
+  }
+}
+```
+
+The full panel defaults to `mode: "panel"`; button mode does not initialize its
+GitHub reads, editors, watchers, or polling. `container`, `stack`, and `target`
+are layout IDs, with the defaults shown above. Adapt them together to the user's
+layout. The button registers the target in `workspace.panels`, preserving existing
+choices, so the stock tab bar can remember it per space. A missing target disables
+the button and explains the missing layout integration in its tooltip.
+
+Keep Herdr's original `tabs` mod. Place the button before the tab bar on platforms
+where the tab bar draws window buttons, so those controls stay at the window edge.
+Preserve traffic-light clearance on macOS. The example layout illustrates this
+arrangement. No replacement tab bar or other third-party mod is required.
+
+For an older `pr-tab-bar` installation, replace its layout reference with `tabs`
+and add the button block. Verify panel switching and then remove the obsolete
+installed `pr-tab-bar` folder. Chezmoi does not delete obsolete files automatically.
 
 Commands for a shown copy:
 

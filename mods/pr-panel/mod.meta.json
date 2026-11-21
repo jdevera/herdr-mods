@@ -1,5 +1,5 @@
 {
-  "description": "Pull request details, comments, checks, failed-job logs, and files for the current branch or repository.",
+  "description": "Pull request details, comments, checks, failed-job logs, and files, with an integrated panel toggle.",
   "license": "Apache-2.0",
   "install": ["node", "install.ts"],
   "build": {
