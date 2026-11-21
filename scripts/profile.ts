@@ -367,7 +367,13 @@ To clone a repository first: sh setup.sh --repo URL.
 
         if (code === 0) {
             console.log(
-                "Setup complete. Ask your agent to read herdr-app --skill and each mod's RECIPE.md, then integrate the mods into your layout.",
+                `Setup complete. Copy this prompt to your agent to make the mods visible:
+
+Integrate the installed Herdr mods in ${JSON.stringify(destDir)} into my current layout.
+
+If this terminal is remote, first identify which machine runs the Herdr client and configure that client.
+
+Read \`herdr-app --skill\`, then each installed mod's RECIPE.md under ${JSON.stringify(join(destDir, "mods"))}. Follow those instructions to make the mods visible, preserving my existing layout, keybindings, and unrelated mods. Avoid adding duplicate controls. Validate with \`herdr-app check\`, inspect status, and visually verify the result in the running app.`,
             );
         }
 

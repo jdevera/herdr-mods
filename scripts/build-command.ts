@@ -13,10 +13,18 @@ import { spawnSync } from "node:child_process";
 import { build } from "esbuild";
 import { PROJECT } from "./mods.ts";
 
-function run(command: string, args: string[]): void {
-    const result = spawnSync(command, args, { stdio: "inherit" });
+function run(command: string, args: string[], quiet = false): void {
+    const result = spawnSync(command, args, {
+        stdio: quiet ? "pipe" : "inherit",
+        encoding: "utf8",
+    });
 
     if (result.error || result.status !== 0) {
+        if (quiet) {
+            process.stdout.write(result.stdout ?? "");
+            process.stderr.write(result.stderr ?? "");
+        }
+
         throw new Error(
             `${command} failed: ${result.error?.message ?? result.status}`,
         );
@@ -90,7 +98,7 @@ try {
         run("codesign", ["--sign", "-", output]);
     }
 
-    run(output, ["--help"]);
+    run(output, ["--help"], true);
     const final = join(
         directory,
         process.platform === "win32" ? "herdr-mods.exe" : "herdr-mods",
