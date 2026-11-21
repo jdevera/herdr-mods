@@ -171,6 +171,7 @@ if(process.argv[2]==='ci') {
         ]);
         assert.equal(helperCount(), 1);
         assert.equal(commandCount(), 1);
+        assert.equal(cli("diff", "--no-pager"), "");
         rmSync(join(bin, "herdr-mods"));
         rmSync(join(destination, "mods/pr-panel/bin/fixture"));
         cli("apply");
@@ -202,6 +203,19 @@ if(process.argv[2]==='ci') {
         cli("apply");
         assert.equal(commandCount(), 3);
         assert.equal(helperCount(), 3);
+        const customMetaPath = join(
+            source,
+            "mods/pr-status-badge/mod.meta.json",
+        );
+
+        const customMeta = JSON.parse(readFileSync(customMetaPath, "utf8"));
+
+        customMeta.install = [process.execPath, "custom-fixture.cjs"];
+        writeFileSync(customMetaPath, JSON.stringify(customMeta));
+        writeFileSync(
+            join(source, "mods/pr-status-badge/custom-fixture.cjs"),
+            `const fs=require('node:fs');fs.mkdirSync('.cache',{recursive:true});const p='.cache/custom-count';fs.writeFileSync(p,String(fs.existsSync(p)?Number(fs.readFileSync(p))+1:1));`,
+        );
         const again = ok("/bin/sh", [
             join(source, "setup.sh"),
             "--source",
@@ -210,6 +224,13 @@ if(process.argv[2]==='ci') {
         ]);
 
         assert.match(again, /Setup complete/);
+        assert.equal(
+            readFileSync(
+                join(destination, "mods/pr-status-badge/.cache/custom-count"),
+                "utf8",
+            ),
+            "1",
+        );
         assert.equal(commandCount(), 3);
         assert.equal(
             JSON.parse(readFileSync(join(profile, "chezmoi.json"), "utf8"))

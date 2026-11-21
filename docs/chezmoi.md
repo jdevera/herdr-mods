@@ -37,6 +37,10 @@ Node.js must be 24.12+; the suggested installation is `mise use --global node@24
 The bootstrap also checks npm and Git. Approved builds declare extra tools in
 metadata. Nothing installs those tools or edits your shell configuration for you.
 
+Setup finishes with a second pass over only the build hooks to record that their
+outputs now exist. Cached builds are skipped, and ordinary custom commands are
+not repeated. This avoids a pending build-hook diff immediately after installation.
+
 Setup can be rerun. It reuses existing profile paths and choices; `--source` can
 point the profile at another checkout without moving or deleting either checkout.
 Use `--destination PATH` to change the Herdr app home and `--bin-dir PATH` to

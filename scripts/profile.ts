@@ -346,7 +346,24 @@ To clone a repository first: sh setup.sh --repo URL.
         console.log(
             "Applying with chezmoi; it will ask about conflicting local edits…",
         );
-        const code = chezmoi(profile, ["apply"]);
+        let code = chezmoi(profile, ["apply"]);
+
+        if (code === 0) {
+            // The first build changes the rendered hooks from missing to present.
+            // Record that state through chezmoi, without repeating custom commands.
+            code = chezmoi(profile, [
+                "apply",
+                "--source-path",
+                join(
+                    sourceDir,
+                    ".chezmoiscripts/run_onchange_after_10-command.js.tmpl",
+                ),
+                join(
+                    sourceDir,
+                    ".chezmoiscripts/run_onchange_after_20-mods.js.tmpl",
+                ),
+            ]);
+        }
 
         if (code === 0) {
             console.log(
