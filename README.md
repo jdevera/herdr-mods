@@ -21,11 +21,12 @@ mod’s documentation when adapting them to your setup.
 
 ### I want all the mods
 
-From this checkout:
-
 ```sh
-sh setup.sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/jdevera/herdr-mods/HEAD/setup.sh)" -- --repo https://github.com/jdevera/herdr-mods.git
 ```
+
+Chezmoi clones the repository into its own source directory. If you already have
+a checkout, run `sh setup.sh` there instead.
 
 Setup checks requirements, explains its steps, and offers the mod build commands
 as a group or individually. It installs `herdr-mods` in `~/.local/bin` and creates
@@ -40,9 +41,7 @@ document any additional build requirements in their own folders. Missing tools
 are reported before deployment, with Brew/mise commands or installation links.
 
 Already have a checkout elsewhere? Run `sh setup.sh --source /path/to/checkout`.
-A standalone copy of `setup.sh` also accepts `--repo <repository-url>`: chezmoi
-clones into its own source directory, leaving your other profiles alone. This
-repository has no published remote yet; see [setup options](docs/chezmoi.md).
+See [setup options](docs/chezmoi.md) for custom paths and branches.
 
 #### Make them visible in Herdr
 
@@ -56,7 +55,13 @@ Give your agent this instruction:
 
 #### Keep them up to date
 
-After updating or editing this checkout:
+To pull and apply updates:
+
+```sh
+herdr-mods update
+```
+
+To review and apply local edits:
 
 ```sh
 herdr-mods diff
@@ -70,11 +75,9 @@ and are restored if missing. Each computer needs its own setup.
 
 ### I only want one mod
 
-Give your agent the repository address and the mod you want. Replace the
-placeholders in this prompt with a URL (or local checkout) and a mod name from
-the catalogue above:
+Replace `<mod-name>` with a mod from the catalogue above:
 
-> Get `<mod-name>` from `<repository-url-or-path>` and integrate it into my Herdr.
+> Get `<mod-name>` from https://github.com/jdevera/herdr-mods and integrate it into my Herdr.
 > First run `herdr-app --skill` and read `~/.config/herdr-app/AGENTS.md` (or
 > `$HERDR_APP_HOME/AGENTS.md` if set). Inspect the mod's source and `RECIPE.md`,
 > copy its complete package with licenses and provenance, and follow its setup
@@ -124,6 +127,9 @@ npm ci
 prek install
 prek run --all-files
 ```
+
+GitHub Actions runs these checks on Linux and macOS for pushes and pull requests.
+It also builds and smoke-tests the standalone executable.
 
 Checks cover TypeScript types and lint, JavaScript syntax, Go formatting and vet,
 repository-metadata/configuration schemas, required files, license text and provenance, and

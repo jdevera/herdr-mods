@@ -22,14 +22,13 @@ sh setup.sh --source /path/to/herdr-mods
 To let chezmoi clone first, use a standalone copy of `setup.sh`:
 
 ```sh
-sh /path/to/setup.sh --repo <repository-url>
+sh /path/to/setup.sh --repo https://github.com/jdevera/herdr-mods.git
 ```
 
 The clone goes into `$XDG_DATA_HOME/herdr-mods`, defaulting to
-`~/.local/share/herdr-mods`. `--branch NAME` selects its initial branch. This
-repository has no published remote yet, so no download URL is advertised. The
-bootstrap is self-contained; once published it can be downloaded without cloning
-first. It explicitly sets chezmoi's source, destination, config, generated-config,
+`~/.local/share/herdr-mods`. `--branch NAME` selects its initial branch. The
+[README](../README.md#install) provides a download-and-run command without an
+existing checkout. It explicitly sets chezmoi's source, destination, config, generated-config,
 cache, and state paths instead of using another profile's defaults.
 
 Requirements are checked before deployment. Missing chezmoi on macOS gets a
@@ -53,7 +52,7 @@ herdr-mods diff
 herdr-mods apply
 ```
 
-Once the checkout has a remote:
+To pull and apply remote updates:
 
 ```sh
 herdr-mods update

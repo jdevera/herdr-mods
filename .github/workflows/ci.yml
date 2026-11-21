@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+          cache: false
+      - name: Install chezmoi
+        run: |
+          go install github.com/twpayne/chezmoi/v2@v2.74.1
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - run: chezmoi --version
+      - run: npm ci
+      - run: npm run check:repo
+      - run: npm run readme
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: node scripts/check-source.ts
+      - run: npm test
+      - run: go -C mods/pr-panel/helper vet ./...
+      - name: Build standalone command
+        run: npm run build:command
+      - name: Smoke-test standalone command
+        run: |
+          .build/command/herdr-mods --help
+          .build/command/herdr-mods --licenses > /dev/null
+      - name: Ensure checks leave tracked files unchanged
+        run: git diff --exit-code
