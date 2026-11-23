@@ -6,10 +6,15 @@ Native UI mods for Herdr Desktop, supporting local and remote repositories.
 
 <!-- mods:start -->
 
-| Mod                                      | Description                                                                                          | License    |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- |
-| [Pull request panel](mods/pr-panel/)     | Pull request details, comments, checks, failed-job logs, and files, with an integrated panel toggle. | Apache-2.0 |
-| [PR status badge](mods/pr-status-badge/) | Standalone current-branch PR status badge linking to GitHub, with state colors and icons.            | MIT        |
+| Mod                                         | Description                                                                                                        | Status bar              | License    |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------- | ---------- |
+| [Pull request panel](mods/pr-panel/)        | Pull request details, comments, checks, failed-job logs, and files, with an integrated panel toggle.               | —                       | Apache-2.0 |
+| [PR status badge](mods/pr-status-badge/)    | Standalone current-branch PR status badge linking to GitHub, with state colors and icons.                          | API v1; also standalone | MIT        |
+| [Agent status](mods/status-agents/)         | Agent totals and blocked-agent attention, usable independently or with the configurable status bar.                | API v1; also standalone | MIT        |
+| [Configurable status bar](mods/status-bar/) | Configurable status bar with independently registered components, responsive sizing, and a stock-bar switch.       | —                       | MIT        |
+| [Branch status](mods/status-branch/)        | Current checkout branch indicator, usable independently or with the configurable status bar.                       | API v1; also standalone | MIT        |
+| [Commands status](mods/status-commands/)    | Command palette control showing its configured shortcut, usable independently or with the configurable status bar. | API v1; also standalone | MIT        |
+| [Computer status](mods/status-computer/)    | Active workspace computer indicator, usable independently or with the configurable status bar.                     | API v1; also standalone | MIT        |
 
 <!-- mods:end -->
 

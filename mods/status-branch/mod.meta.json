@@ -1,0 +1,8 @@
+{
+  "description": "Current checkout branch indicator, usable independently or with the configurable status bar.",
+  "license": "MIT",
+  "statusBar": {
+    "api": 1,
+    "standalone": true
+  }
+}

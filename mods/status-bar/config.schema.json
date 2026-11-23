@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Status bar settings",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "$comment": {
+      "type": "string"
+    },
+    "left": {
+      "$ref": "#/$defs/order"
+    },
+    "right": {
+      "$ref": "#/$defs/order"
+    },
+    "gap": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 40
+    },
+    "padding": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 40
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "hidden": {
+            "type": "boolean"
+          },
+          "keepVisible": {
+            "type": "boolean"
+          },
+          "minWidth": {
+            "type": "number",
+            "minimum": 0
+          },
+          "maxWidth": {
+            "type": "number",
+            "minimum": 0
+          },
+          "priority": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "order": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9_-]+$"
+      }
+    }
+  }
+}

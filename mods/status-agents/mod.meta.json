@@ -1,0 +1,8 @@
+{
+  "description": "Agent totals and blocked-agent attention, usable independently or with the configurable status bar.",
+  "license": "MIT",
+  "statusBar": {
+    "api": 1,
+    "standalone": true
+  }
+}

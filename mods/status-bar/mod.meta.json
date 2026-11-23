@@ -1,0 +1,4 @@
+{
+  "description": "Configurable status bar with independently registered components, responsive sizing, and a stock-bar switch.",
+  "license": "MIT"
+}

@@ -20,6 +20,16 @@
     "license": {
       "enum": ["MIT", "Apache-2.0"]
     },
+    "statusBar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api", "standalone"],
+      "description": "Optional compatibility with this repository's Status Bar API, not a Herdr manifest field.",
+      "properties": {
+        "api": { "const": 1 },
+        "standalone": { "type": "boolean" }
+      }
+    },
     "install": {
       "type": "array",
       "minItems": 1,

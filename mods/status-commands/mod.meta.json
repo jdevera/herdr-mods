@@ -1,0 +1,8 @@
+{
+  "description": "Command palette control showing its configured shortcut, usable independently or with the configurable status bar.",
+  "license": "MIT",
+  "statusBar": {
+    "api": 1,
+    "standalone": true
+  }
+}

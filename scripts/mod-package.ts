@@ -9,6 +9,7 @@ export interface Manifest {
 export interface Metadata {
     description: string;
     license: string;
+    statusBar?: { api: 1; standalone: boolean };
     install?: string[];
     build?: {
         description: string;
@@ -52,7 +53,13 @@ export function readPackage(pkg: string): Mod {
         throw new Error(`${pkg}/mod.json: missing title`);
     }
 
-    for (const field of ["description", "license", "install", "settings"]) {
+    for (const field of [
+        "description",
+        "license",
+        "install",
+        "settings",
+        "statusBar",
+    ]) {
         if (field in manifest) {
             throw new Error(
                 `${pkg}/mod.json: ${field} does not belong in the Herdr manifest`,
@@ -71,6 +78,7 @@ export function readPackage(pkg: string): Mod {
             ![
                 "description",
                 "license",
+                "statusBar",
                 "install",
                 "build",
                 "$schema",
@@ -97,6 +105,25 @@ export function readPackage(pkg: string): Mod {
         throw new Error(
             `${pkg}/mod.meta.json: install must be a nonempty array of nonempty strings`,
         );
+    }
+
+    if (metadata.statusBar !== undefined) {
+        const status = metadata.statusBar;
+
+        if (
+            status === null ||
+            typeof status !== "object" ||
+            Array.isArray(status) ||
+            !Object.keys(status).every((key) =>
+                ["api", "standalone"].includes(key),
+            ) ||
+            (status as Record<string, unknown>).api !== 1 ||
+            typeof (status as Record<string, unknown>).standalone !== "boolean"
+        ) {
+            throw new Error(
+                `${pkg}/mod.meta.json: statusBar requires api 1 and boolean standalone`,
+            );
+        }
     }
 
     if (metadata.build !== undefined) {

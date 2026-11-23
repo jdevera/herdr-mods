@@ -57,3 +57,13 @@ new standalone badge beside it. After verifying the new layout, remove the old
 installed `pr-badge` folder. Chezmoi does not automatically remove obsolete files.
 Do not delete user configuration or unrelated customizations. The reference
 arrangement is in `examples/layouts/main-pr.json`; adapt it to the existing layout.
+
+## Use the configurable status bar
+
+This is a **status-bar-compatible mod, API v1**, and also works standalone using
+the layout above. For bar placement, install `status-bar` and follow its recipe.
+Use item ID `pr` and mod `pr-status-badge` in an unhidden zero-width source block
+with `props.statusBar = {bar: "workspace", item: "pr"}`. Add `pr` between `branch`
+and `agents` in the bar settings. Remove this region's old standalone badge block
+to release its fixed 130px slot. No PR publishes null and takes no bar space.
+The complete folder, including client.js, remains independently copyable.

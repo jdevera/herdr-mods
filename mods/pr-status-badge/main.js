@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 Jacobo de Vera
-import { View, div, svg } from "gpui-kit";
+import { View, div } from "gpui-kit";
 import { h_flex } from "gpui-base";
 import { spaces, theme, focused, panes, exec, checking } from "herdr";
+import { StatusClient, renderItem } from "./client.js";
 
 export default class PrStatusBadge extends View {
     init(_props, cx) {
+        this.client = new StatusClient();
         this.result = null;
         this.cache = null;
         this.pending = false;
@@ -14,6 +16,10 @@ export default class PrStatusBadge extends View {
         if (checking()) return;
         cx.timer.every(5000, (cx) => this.refresh(cx));
         this.refresh(cx);
+    }
+
+    close() {
+        this.client.close();
     }
 
     target() {
@@ -119,9 +125,9 @@ export default class PrStatusBadge extends View {
         });
     }
 
-    prBadge(t, result) {
+    statusItem(result) {
         const pr = result?.pr;
-        if (!pr) return div();
+        if (!pr) return null;
         const state =
             pr.state === "MERGED"
                 ? "merged"
@@ -131,32 +137,21 @@ export default class PrStatusBadge extends View {
                     ? "draft"
                     : "open";
         const styles = {
-            draft: { color: t.muted, icon: "git-pull-request-draft" },
-            open: { color: t.ansi2, icon: "git-pull-request" },
-            closed: { color: t.ansi1, icon: "git-pull-request-closed" },
-            merged: { color: t.ansi5, icon: "git-merge" },
+            draft: { color: "muted", icon: "git-pull-request-draft" },
+            open: { color: "ansi2", icon: "git-pull-request" },
+            closed: { color: "ansi1", icon: "git-pull-request-closed" },
+            merged: { color: "ansi5", icon: "git-merge" },
         };
         const { color, icon } = styles[state];
-        return h_flex()
-            .id("pr-status-badge")
-            .gap(5)
-            .items_center()
-            .px(6)
-            .py(2)
-            .rounded(4)
-            .text_color(color)
-            .hover((s) => s.bg(t.hover))
-            .tooltip(`${pr.title} · ${state}`)
-            .on_click((_event, cx) => {
-                cx.stop_propagation();
-                cx.open_url(pr.url);
-            })
-            .child(
-                svg(`mods/pr-status-badge/icons/${icon}-16.svg`)
-                    .size(14)
-                    .flex_none(),
-            )
-            .child(`PR #${pr.number}`);
+        return {
+            label: `PR #${pr.number}`,
+            compactLabel: `#${pr.number}`,
+            icon: `mods/pr-status-badge/icons/${icon}-16.svg`,
+            color,
+            tooltip: `${pr.title} · ${state}`,
+            priority: 90,
+            action: { url: pr.url },
+        };
     }
 
     render(cx) {
@@ -164,6 +159,9 @@ export default class PrStatusBadge extends View {
         const target = this.target();
         const result = this.result?.key === target.key ? this.result : null;
         const t = theme();
+        const item = this.statusItem(result);
+        this.client.publish(item);
+        if (this.client.connected()) return div().size(0);
 
         return h_flex()
             .size_full()
@@ -173,6 +171,6 @@ export default class PrStatusBadge extends View {
             .border_t(1)
             .border_color(t.border)
             .text_size(11.8)
-            .child(this.prBadge(t, result));
+            .child(item ? renderItem(item, { id: "pr-status-badge" }) : div());
     }
 }

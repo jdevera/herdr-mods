@@ -1,4 +1,5 @@
 {
+  "$comment": "Modified by Jacobo de Vera, 2026: PR panel integration and configurable stock/custom status bar; see PROVENANCE.md.",
   "id": "root",
   "cloned_from": {
     "name": "main",
@@ -192,20 +193,127 @@
           "resizable": false,
           "children": [
             {
-              "id": "status",
-              "type": "block",
-              "content": {
-                "mod": "workspace-status"
-              }
+              "id": "status-modes",
+              "type": "stack",
+              "active": "custom-status",
+              "children": [
+                {
+                  "id": "native-status",
+                  "type": "block",
+                  "content": {
+                    "mod": "workspace-status"
+                  }
+                },
+                {
+                  "id": "custom-status",
+                  "type": "row",
+                  "resizable": false,
+                  "children": [
+                    {
+                      "id": "status-bar-host",
+                      "type": "block",
+                      "content": {
+                        "mod": "status-bar",
+                        "props": {
+                          "bar": "workspace"
+                        }
+                      }
+                    },
+                    {
+                      "id": "status-source-computer",
+                      "type": "block",
+                      "size": {
+                        "px": 0
+                      },
+                      "content": {
+                        "mod": "status-computer",
+                        "props": {
+                          "statusBar": {
+                            "bar": "workspace",
+                            "item": "computer"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "status-source-branch",
+                      "type": "block",
+                      "size": {
+                        "px": 0
+                      },
+                      "content": {
+                        "mod": "status-branch",
+                        "props": {
+                          "statusBar": {
+                            "bar": "workspace",
+                            "item": "branch"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "status-source-pr",
+                      "type": "block",
+                      "size": {
+                        "px": 0
+                      },
+                      "content": {
+                        "mod": "pr-status-badge",
+                        "props": {
+                          "statusBar": {
+                            "bar": "workspace",
+                            "item": "pr"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "status-source-agents",
+                      "type": "block",
+                      "size": {
+                        "px": 0
+                      },
+                      "content": {
+                        "mod": "status-agents",
+                        "props": {
+                          "statusBar": {
+                            "bar": "workspace",
+                            "item": "agents"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "id": "status-source-commands",
+                      "type": "block",
+                      "size": {
+                        "px": 0
+                      },
+                      "content": {
+                        "mod": "status-commands",
+                        "props": {
+                          "statusBar": {
+                            "bar": "workspace",
+                            "item": "commands"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
             },
             {
-              "id": "pr-status",
+              "id": "status-switch",
               "type": "block",
               "size": {
-                "px": 130
+                "px": 28
               },
               "content": {
-                "mod": "pr-status-badge"
+                "mod": "status-bar",
+                "props": {
+                  "role": "switch"
+                }
               }
             }
           ]

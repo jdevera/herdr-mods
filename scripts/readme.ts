@@ -24,11 +24,18 @@ export async function generate(root = PROJECT): Promise<boolean> {
     const escape = (text: string) =>
         text.replaceAll("|", "\\|").replaceAll("\n", " ");
 
-    const rows = ["| Mod | Description | License |", "| --- | --- | --- |"];
+    const rows = [
+        "| Mod | Description | Status bar | License |",
+        "| --- | --- | --- | --- |",
+    ];
 
     for (const { id, manifest: m, metadata } of discover(root)) {
+        const integration = metadata.statusBar
+            ? `API v${metadata.statusBar.api}; ${metadata.statusBar.standalone ? "also standalone" : "bar required"}`
+            : "—";
+
         rows.push(
-            `| [${escape(m.title)}](mods/${id}/) | ${escape(metadata.description)} | ${escape(metadata.license)} |`,
+            `| [${escape(m.title)}](mods/${id}/) | ${escape(metadata.description)} | ${integration} | ${escape(metadata.license)} |`,
         );
     }
 

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
     cpSync,
+    existsSync,
     mkdirSync,
     mkdtempSync,
     readFileSync,
@@ -45,12 +46,41 @@ function metadata(root: string) {
     return join(root, "mods/pr-panel/mod.meta.json");
 }
 
+test("compatible packages carry the same standalone API client", () => {
+    const canonical = readFileSync(
+        join(PROJECT, "mods/status-bar/client.js"),
+        "utf8",
+    );
+
+    for (const mod of discover()) {
+        if (!mod.metadata.statusBar) {
+            continue;
+        }
+
+        assert.equal(
+            readFileSync(join(mod.package, "client.js"), "utf8"),
+            canonical,
+            mod.id,
+        );
+        assert.ok(existsSync(join(mod.package, "README.md")), mod.id);
+        assert.ok(existsSync(join(mod.package, "tests")), mod.id);
+    }
+});
+
 test("discovers package-root manifests and generates an idempotent README section", async (t) => {
     const { root } = fixture(t);
 
     assert.deepEqual(
         discover(root).map((m) => m.id),
-        ["pr-panel", "pr-status-badge"],
+        [
+            "pr-panel",
+            "pr-status-badge",
+            "status-agents",
+            "status-bar",
+            "status-branch",
+            "status-commands",
+            "status-computer",
+        ],
     );
     json(metadata(root), {
         ...(readJson(metadata(root)) as object),
@@ -96,6 +126,9 @@ test("repository rules accept the tree and reject invalid manifests and license 
         { install: [""] },
         { install: ["go", 42] },
         { typo: true },
+        { statusBar: { api: 2, standalone: true } },
+        { statusBar: { api: 1 } },
+        { statusBar: { api: 1, standalone: "yes" } },
         {
             build: {
                 description: "Build",
@@ -127,7 +160,13 @@ test("Herdr manifests keep runtime fields and reject repository metadata", (t) =
     const path = join(root, "mods/pr-panel/mod.json");
     const original = readJson(path) as object;
 
-    for (const field of ["description", "license", "install", "settings"]) {
+    for (const field of [
+        "description",
+        "license",
+        "install",
+        "settings",
+        "statusBar",
+    ]) {
         json(path, { ...original, [field]: "misplaced" });
         assert.throws(
             () => validate(root),
